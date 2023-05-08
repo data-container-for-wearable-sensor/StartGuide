@@ -1,9 +1,10 @@
 # 動作環境
 動作は以下で行っている。
+- WSL2(Ubuntu 22.04)
 - Docker
 - Google Chrome
 
-動作確認や手順の中では以下のコマンドを用いるので事前に導入する事。
+動作確認や手順の中では以下のコマンドを用いるので事前に導入をする。
 - git
 - curl
 
@@ -52,7 +53,7 @@ container-testlab-zookeeper-1            confluentinc/cp-zookeeper:7.1.0        
              2888/tcp, 0.0.0.0:2181->2181/tcp, :::2181->2181/tcp, 3888/tcp
 ~/container-testlab$
 ```
-この時点では iot_container_consumer は  Restartやdown等の異常に見える状態でよいです。
+この時点では container-consumer のコンテナは  RestartやDownですが問題ありません。
 
 # 起動後の確認
 いくつかの画面が開いています。正しく動作していると以下のURLから起動画面が確認できます。
@@ -63,8 +64,75 @@ Google Chrome で以下のページを開いてみてください。
 ![Grafana](grafana.png)  
 - http://localhost:30002/
 ![IotRegisitory](iot-registory.png)  
-- http://localhost:1080/
+- http://localhost:1188/
 ![TestlabSensor](testlab-sensor.png)  
 
-# 操作手順
-ここでは、スマートフォンから送信される６軸センサのデータを送る為の手順を示します。
+# 初期設定手順
+サンプルアプリのデータを可視化するまでの手順を示します。
+
+## KafkaUIでトピックを確認
+Kafkaの設定をします。
+Kafkaではトピックに対し、データを提供するProducerとデータを利用するConsumerが存在します。
+
+以下のKafkaUIの画面より、現在存在するトピックを確認します。
+ページを開いた後、 `Show Internal Topics` を無効化すると4つのトピックが表示されています。
+- http://localhost:8080/ui/clusters/local/topics
+![kafkaui1](kafka_ui1.png)  
+
+## KafkaへのTopicの追加
+このKafkaの環境は、未知のトピックを投入された場合、自動的に新たなトピックを追加する設定をしてあります。
+そこで、サンプルアプリからデータを送ることでトピックを追加します。
+
+- http://localhost:1188/ をChromeで開く
+  - Webページが表示される
+- `値の更新` を押下
+  - 加速度、傾きなどに適当な値が入る
+- `単発送信` を押下
+  - サンプルアプリからKafkaに１つデータを送信
+
+![サンプルアプリ](send_example_data.png)  
+
+## Topicの作成確認
+KafkaUIを開き画面を更新します。  
+`json_mb_ctopic` と `mb_ctopic` の二つのトピックが増えていれば期待通りです。
+
+![kafkaui2](kafka_ui2.png)  
+## Docker Compose 
+前述の `container-consumer` はこの手順完了後Statusが `Up` になります。  
+```
+$ docker compose ps container-consumer
+container-testlab-container-consumer-1   public.ecr.aws/l1b7e4q9/iot_container_consumer:0.0.3   "/protoschema"      container-consumer   40 minutes ago      Up 40 minutes
+```
+
+## スキーマリポジトリ
+
+### サンプルデータの取得
+サンプルアプリから送信されるデータのスキーマ情報をまず定義します。
+以下のバイナリデータはコンテナ化されたタイムスタンプ付きの６軸のデータです。
+
+[Download(ExampleContainer)](mobile_acce.bin)
+
+このファイルをサンプルコンテナと今後呼びます。
+
+
+### スキーマリポジトリの動作確認
+スキーマリポジトリの確認を行います。
+- http://localhost:30002/
+
+### スキーマリポジトリのスキーマ確認
+テストラボで準備しているスキーマリポジトリには以下の機能があります。
+
+1. コンテナデータからのスキーマ定義
+2. コンテナデータへスキーマを適用したデータのプレビュー
+
+### コンテナデータの読み込み
+初期起動時には画面の左下ボタンよりダウンロードしたファイルを読み込みます。
+ボタンが見つけられない場合、ブラウザのズームを100%未満にすると見えます。
+![LoadFileButton](iot-registry-loaddata.png.png)  
+
+前述のサンプルコンテナを読み込むと、以下のようにプレビューされます。
+![サンプルコンテナ](iot-registry-preview.png)  
+サンプルコンテナに対応するスキーマファイルは、リポジトリに内蔵されており、上記のように
+`dt, x, y, z, alpha, beta, gamma` の７つのフィールドが定義され、サンプルコンテナに適用された結果が `Data` や `Raw` で確認できます。
+
+スキーマリポジトリの確認は以上です。
