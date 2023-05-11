@@ -6,7 +6,7 @@
 
 動作確認や手順の中では以下のコマンドを用いるので事前に導入をする。
 - git
-- curl
+- docker
 
 # 起動手順
 
@@ -14,20 +14,19 @@ docker composeでアプリケーションを動かします。
 まず、gitで必要なファイルを取得(クローン)します。
 
 ```
-~$ git clone https://github.com/tech-sketch/container-testlab.git
+~$ git clone https://github.com/tech-sketch/wearable-sensing-data-container-format-for-iot.git
 ```
-<!-- TODO: git cloneではなくコピペか別ファイルにすべきかも-->
 
 
 以下の手順で動作を確認
 ```
-~$ cd container-testlab/
-~/container-testlab$ docker compose up -d
+~$ cd wearable-sensing-data-container-format-for-iot/
+~/wearable-sensing-data-container-format-for-iot$ docker compose up -d
 ```
 
 実行結果の確認
 ```
-~/container-testlab$ docker compose ps
+~/wearable-sensing-data-container-format-for-iot$ docker compose ps -a
 ```
 で `container-consumer` 以外が `Up` のステータスになっていればOKです。
 <details>
@@ -36,48 +35,50 @@ docker composeでアプリケーションを動かします。
 <code>
 NAME                                     IMAGE                                                             COMMAND                  SERVICE              CREATED             STATUS               
              PORTS
-container-testlab-broker-1               confluentinc/cp-kafka:7.1.0                                       "/etc/confluent/dock…"   broker               11 seconds ago      Up 8 seconds         
+wearable-sensing-data-container-format-for-iot-broker-1               confluentinc/cp-kafka:7.1.0                                       "/etc/confluent/dock…"   broker               11 seconds ago      Up 8 seconds         
              0.0.0.0:9092->9092/tcp, :::9092->9092/tcp, 0.0.0.0:9101->9101/tcp, :::9101->9101/tcp, 0.0.0.0:19092->19092/tcp, :::19092->19092/tcp
-container-testlab-connect-1              public.ecr.aws/l1b7e4q9/testlab_connect:0.9.9                     "/etc/confluent/dock…"   connect              11 seconds ago      Up 7 seconds (health: starting)   0.0.0.0:8083->8083/tcp, :::8083->8083/tcp, 9092/tcp
-container-testlab-container-consumer-1   public.ecr.aws/l1b7e4q9/iot_container_consumer:0.0.3              "/protoschema"           container-consumer   11 seconds ago      Restarting (0) 1 second ago
-container-testlab-grafana-1              grafana/grafana:8.5.3                                             "/run.sh"                grafana              11 seconds ago      Up 8 seconds         
+wearable-sensing-data-container-format-for-iot-connect-1              public.ecr.aws/l1b7e4q9/testlab_connect:0.9.9                     "/etc/confluent/dock…"   connect              11 seconds ago      Up 7 seconds (health: starting)   0.0.0.0:8083->8083/tcp, :::8083->8083/tcp, 9092/tcp
+wearable-sensing-data-container-format-for-iot-container-consumer-1   public.ecr.aws/l1b7e4q9/iot_container_consumer:0.0.3              "/protoschema"           container-consumer   11 seconds ago      Restarting (0) 1 second ago
+wearable-sensing-data-container-format-for-iot-grafana-1              grafana/grafana:8.5.3                                             "/run.sh"                grafana              11 seconds ago      Up 8 seconds         
              0.0.0.0:3000->3000/tcp, :::3000->3000/tcp
-container-testlab-iot-registry-1         public.ecr.aws/l1b7e4q9/iot_registory:0.0.1                       "docker-entrypoint.s…"   iot-registry         11 seconds ago      Up 8 seconds         
+wearable-sensing-data-container-format-for-iot-iot-registry-1         public.ecr.aws/l1b7e4q9/iot_registory:0.0.1                       "docker-entrypoint.s…"   iot-registry         11 seconds ago      Up 8 seconds         
              0.0.0.0:30002->30002/tcp, :::30002->30002/tcp
-container-testlab-kafka-ui-1             provectuslabs/kafka-ui:3ee2f87255d2a4beacfb177c4a6bdd9f52fd6a09   "/bin/sh -c 'java $J…"   kafka-ui             10 seconds ago      Up 6 seconds         
+wearable-sensing-data-container-format-for-iot-kafka-ui-1             provectuslabs/kafka-ui:3ee2f87255d2a4beacfb177c4a6bdd9f52fd6a09   "/bin/sh -c 'java $J…"   kafka-ui             10 seconds ago      Up 6 seconds         
              0.0.0.0:8080->8080/tcp, :::8080->8080/tcp
-container-testlab-ksqldb-cli-1           confluentinc/cp-ksqldb-cli:7.1.0                                  "/bin/sh"                ksqldb-cli           10 seconds ago      Up 5 seconds         
+wearable-sensing-data-container-format-for-iot-ksqldb-cli-1           confluentinc/cp-ksqldb-cli:7.1.0                                  "/bin/sh"                ksqldb-cli           10 seconds ago      Up 5 seconds         
 
-container-testlab-ksqldb-server-1        confluentinc/cp-ksqldb-server:7.1.0                               "/etc/confluent/dock…"   ksqldb-server        10 seconds ago      Up 6 seconds         
+wearable-sensing-data-container-format-for-iot-ksqldb-server-1        confluentinc/cp-ksqldb-server:7.1.0                               "/etc/confluent/dock…"   ksqldb-server        10 seconds ago      Up 6 seconds         
              0.0.0.0:8088->8088/tcp, :::8088->8088/tcp
-container-testlab-postgresql-1           postgres:11.13-alpine                                             "docker-entrypoint.s…"   postgresql           11 seconds ago      Up 9 seconds         
+wearable-sensing-data-container-format-for-iot-postgres-1           postgres:11.13-alpine                                             "docker-entrypoint.s…"   postgres           11 seconds ago      Up 9 seconds         
              0.0.0.0:5432->5432/tcp, :::5432->5432/tcp
-container-testlab-rest-proxy-1           confluentinc/cp-kafka-rest:7.1.0                                  "/etc/confluent/dock…"   rest-proxy           11 seconds ago      Up 7 seconds         
+wearable-sensing-data-container-format-for-iot-rest-proxy-1           confluentinc/cp-kafka-rest:7.1.0                                  "/etc/confluent/dock…"   rest-proxy           11 seconds ago      Up 7 seconds         
              0.0.0.0:8082->8082/tcp, :::8082->8082/tcp
-container-testlab-schema-registry-1      confluentinc/cp-schema-registry:7.1.0                             "/etc/confluent/dock…"   schema-registry      11 seconds ago      Up 7 seconds         
+wearable-sensing-data-container-format-for-iot-schema-registry-1      confluentinc/cp-schema-registry:7.1.0                             "/etc/confluent/dock…"   schema-registry      11 seconds ago      Up 7 seconds         
              0.0.0.0:8081->8081/tcp, :::8081->8081/tcp
-container-testlab-testlab-edge-1         public.ecr.aws/l1b7e4q9/testlab-edge:0.0.5                        "python main.py"         testlab-edge         11 seconds ago      Up 9 seconds         
+wearable-sensing-data-container-format-for-iot-testlab-edge-1         public.ecr.aws/l1b7e4q9/testlab-edge:0.0.5                        "python main.py"         testlab-edge         11 seconds ago      Up 9 seconds         
 
-container-testlab-websensor-1            public.ecr.aws/l1b7e4q9/websensor:0.0.1                           "docker-entrypoint.s…"   websensor            11 seconds ago      Up 9 seconds         
+wearable-sensing-data-container-format-for-iot-websensor-1            public.ecr.aws/l1b7e4q9/websensor:0.0.1                           "docker-entrypoint.s…"   websensor            11 seconds ago      Up 9 seconds         
              0.0.0.0:1080->80/tcp, :::1080->80/tcp
-container-testlab-zookeeper-1            confluentinc/cp-zookeeper:7.1.0                                   "/etc/confluent/dock…"   zookeeper            11 seconds ago      Up 8 seconds         
+wearable-sensing-data-container-format-for-iot-zookeeper-1            confluentinc/cp-zookeeper:7.1.0                                   "/etc/confluent/dock…"   zookeeper            11 seconds ago      Up 8 seconds         
              2888/tcp, 0.0.0.0:2181->2181/tcp, :::2181->2181/tcp, 3888/tcp
-~/container-testlab$
+~/wearable-sensing-data-container-format-for-iot$
 </code>
 </pre>
 container-consumer が `Restarting` になっているのはこの後の手順で是正するのでこの時点ではOKです。
+この後のトピック作成手順の完了後Statusが `Up` になります。
+
 </details>
 
 # 起動後の確認
 いくつかの画面が開いています。正しく動作していると以下のURLから起動画面が確認できます。
 Google Chrome で以下のページを開いてみてください。
-- http://localhost:8080/
+- [http://localhost:8080/](http://localhost:8080/)
 ![ApacheKafkaUI](ui4apachekafka.png)  
-- http://localhost:3000/
+- [http://localhost:3000/](http://localhost:3000/)
 ![Grafana](grafana.png)  
-- http://localhost:30002/
+- [http://localhost:30002/](http://localhost:30002/)
 ![IotRegisitory](iot-registory.png)  
-- http://localhost:1188/
+- [http://localhost:1188/](http://localhost:1188/)
 ![TestlabSensor](testlab-sensor.png)  
 
 # 初期設定手順
@@ -91,7 +92,7 @@ Kafkaではトピックに対し、データを提供するProducerとデータ�
 
 以下のKafkaUIの画面より、現在存在するトピックを確認します。
 ページを開いた後、 `Show Internal Topics` を無効化すると4つのトピックが表示されています。
-- http://localhost:8080/ui/clusters/local/topics
+- [http://localhost:8080/ui/clusters/local/topics](http://localhost:8080/ui/clusters/local/topics)
 ![kafkaui1](kafka_ui1.png)  
 
 ### トピックの追加(データの送信)
@@ -99,7 +100,7 @@ Kafkaではトピックに対し、データを提供するProducerとデータ�
 そこで、サンプルアプリからデータを送ることでトピックを追加します。
 
 1. データ送信のページを開く  
-  http://localhost:1188/  
+  [http://localhost:1188/  ](http://localhost:1188/  )
 2.  `値の更新` を押下  
   加速度、傾きなどに適当な値が入る
 1. `単発送信` を押下  
@@ -110,23 +111,23 @@ Kafkaではトピックに対し、データを提供するProducerとデータ�
 ### トピックの作成確認
 KafkaUIを開き画面を更新します。  
 `json_mb_ctopic` と `mb_ctopic` の二つのトピックが増えていれば期待通りです。
+１分程度時間がかかる可能性があります。
 
 ![kafkaui2](kafka_ui2.png)  
-### Docker Composeのコンテナステータス 
-前述の `container-consumer` はトピック作成手順完了後Statusが `Up` になります。  
+
 ```
 $ docker compose ps container-consumer
-container-testlab-container-consumer-1   public.ecr.aws/l1b7e4q9/iot_container_consumer:0.0.3   "/protoschema"      container-consumer   40 minutes ago      Up 40 minutes
+wearable-sensing-data-container-format-for-iot-container-consumer-1   public.ecr.aws/l1b7e4q9/iot_container_consumer:0.0.3   "/protoschema"      container-consumer   40 minutes ago      Up 40 minutes
 ```
 
 ## 可視化画面へのデータを送る
 kafkaに届いたデータをAvroというKafkaでよく用いられるデータに変換し、可視化画面用のDBにSinkする設定を行う。
 
 ### データ変換の登録
-コンテナデータをjsonに変換した `json_mb_topic` から`` `avro` フォーマットに変換し可視化を行う `Grafana`で用いるデータベースに蓄積をする。
+コンテナデータをjsonに変換した `json_mb_topic` から`avro` フォーマットに変換し可視化を行う `Grafana`で用いるデータベースに蓄積をする。
 
 - 以下のページを開く  
-http://localhost:8080/ui/clusters/local/ksqldb/query
+[http://localhost:8080/ui/clusters/local/ksqldb/query](http://localhost:8080/ui/clusters/local/ksqldb/query)
 
 - 画像のようなページが表示される
 ![](ksql_query_page.png)
@@ -181,7 +182,7 @@ show streams;
 ### データのGrafanaへの転送
 KafkaのConnectorを設定。
 - Connectorの設定ページを開く  
-http://localhost:8080/ui/clusters/local/connectors/create-new
+[http://localhost:8080/ui/clusters/local/connectors/create-new](http://localhost:8080/ui/clusters/local/connectors/create-new)
 - Connectorの設定を入力する  
 Name: `avro_mb_jtopic`  
 Config * 
@@ -192,7 +193,7 @@ Config *
   "key.converter": "io.confluent.connect.avro.AvroConverter",
   "value.converter": "io.confluent.connect.avro.AvroConverter",
   "topics": "avro_mb_jtopic",
-  "connection.url": "jdbc:postgresql://postgresql:5432/postgres",
+  "connection.url": "jdbc:postgresql://postgres:5432/postgres",
   "connection.user": "postgres",
   "connection.password": "postgres",
   "dialect.name": "PostgreSqlDatabaseDialect",
@@ -210,7 +211,7 @@ Config *
 
 - Connectorの設定登録を確認する  
 以下のページを開く。  
-http://localhost:8080/ui/clusters/local/connectors
+[http://localhost:8080/ui/clusters/local/connectors](http://localhost:8080/ui/clusters/local/connectors)
 
 `avro_mb_jtopic` というConnectorが存在すればOK
 
@@ -220,7 +221,7 @@ http://localhost:8080/ui/clusters/local/connectors
 
 1. Grafanaへアクセス  
    以下の情報でGrafanaへアクセスしログインする  
-    http://localhost:3000/
+    [http://localhost:3000/](http://localhost:3000/)
     ```
     ID: admin
     Password: admin
@@ -231,7 +232,7 @@ http://localhost:8080/ui/clusters/local/connectors
 
 1. テストデータ送信の確認  
    1. データ送信のページを開く  
-    http://localhost:1188/  
+    [http://localhost:1188/  ](http://localhost:1188/  )
    1.  `値の更新` を押下  
     加速度、傾きなどに適当な値が入る
    1. `単発送信` を押下  
@@ -260,7 +261,7 @@ http://localhost:8080/ui/clusters/local/connectors
 
 1. スキーマリポジトリの動作確認  
 スキーマリポジトリの確認を行います。  
-`http://localhost:30002/` にアクセス
+[http://localhost:30002/](http://localhost:30002/) にアクセス
 
 1. スキーマリポジトリのスキーマ確認
 テストラボで準備しているスキーマリポジトリには以下の機能があります。
