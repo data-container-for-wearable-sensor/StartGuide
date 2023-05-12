@@ -279,3 +279,46 @@ Config *
 `dt, x, y, z, alpha, beta, gamma` の７つのフィールドが定義され、サンプルコンテナに適用された結果が `Data` や `Raw` で確認できます。
 
 スキーマリポジトリの確認は以上です。
+
+### センサーとの接続
+
+スマートフォンからジャイロ(傾き)と加速度のセンサーデータを送るための設定をします。
+
+ここまで作った環境にスマートフォンからインターネット経由(要https)でアクセスする必要があるため、第3者のWebサービスを利用します。
+> ngrokの利用はセンサーデータ（ジャイロ、加速度）をブラウザ経由で取得する際に、ブラウザのセキュリティが要求する事項に対応するためのものです。
+
+#### ngrokによるアクセス
+
+- ngrokのFreeプランのアカウント登録  
+[https://ngrok.com/](https://ngrok.com/) で登録します。
+
+- ngrokのAuthTokensの取得
+[https://dashboard.ngrok.com/tunnels/authtokens](https://dashboard.ngrok.com/tunnels/authtokens)
+でAuthtokensを発行する
+
+- AuthTokensを設定  
+  ```
+  export NGROK_AUTHTOKEN={発行したAuthToken}
+  ```
+  と `compose-dev.yaml` から利用する環境変数NGROK_AUTHTOKENに AuthTokensを書き込む。
+
+- ngrokを実行する  
+`docker compose -f compose-dev.yaml run ngrok` を実行する。  
+実行すると以下のような画面が表示される。
+![ngrok](ngrok.png)  
+`Forwarding` に表示されるURLをスマートフォンで表示する。
+
+#### センサーデータの送信
+画面下部のモーションの許可を押下するとセンサーデータ取得のダイアログが表示されます。
+許可をするとセンサーデータが取得できるようになります。
+
+センサーデータが取得できるようになった後は
+
+* 送信間隔をデフォルト値の `1000 msec` から `50 msec` に変更
+* 送信するデータをデフォルト値 `container` であることを確認
+* `定期送信` にチェックを入れる
+
+これによってデータが送信できるようになります。  
+
+[Grafana http://localhost:3000/](http://localhost:3000/) に設定してあるダッシュボードから確認できます。
+画面の更新間隔を右上で設定できるので1s(１秒)にするとより体感が良くなります。
