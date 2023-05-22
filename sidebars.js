@@ -36,15 +36,12 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Playground',
+      label: 'Testlab System',
       items: [
         'environment/index',
+        'firststep/index',
+        'expansion_guide/index',
       ],
-    },
-    {
-      type: 'category',
-      label: 'Tutorial',
-      items: ['firststep/index'],
     },
   ],
 };
