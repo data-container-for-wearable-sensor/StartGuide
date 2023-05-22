@@ -31,6 +31,7 @@ const sidebars = {
       label: 'IEC 63430?',
       items: [
         'specification/index',
+        'specification/spec_overview',
       ],
     },
     {
