@@ -6,7 +6,7 @@
 - IEC 63430 の概要
   - IEC 63430 とは
   - IEC 63430 Specification Overview
-- Testlab System
+- Test Lab System
   - 環境構築手順
   - チュートリアル
   - お試し環境の拡張方法
