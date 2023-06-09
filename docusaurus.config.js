@@ -6,7 +6,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Testlab Tutorial Page',
+  title: 'Test Lab Tutorial Page',
   tagline: 'オンデマンド、ポータブル、インクリメンタルな「コンテナフォーマット標準の体験環境」',
   favicon: 'img/favicon.ico',
 
@@ -63,7 +63,7 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'Testlab',
+        title: 'Test lab',
         logo: {
           alt: 'Logo',
           src: 'img/logo.png',

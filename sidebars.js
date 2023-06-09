@@ -36,7 +36,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Testlab System',
+      label: 'Test Lab System',
       items: [
         'environment/index',
         'firststep/index',
