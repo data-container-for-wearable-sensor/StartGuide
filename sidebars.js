@@ -25,14 +25,21 @@ const sidebars = {
         'intro/index',
         'intro/overview',
       ],
+      link: {
+        type: 'doc',
+        id: 'intro/index',
+      },
     },
     {
       type: 'category',
-      label: 'IEC 63430?',
+      label: 'IEC 63430とは',
       items: [
-        'specification/index',
         'specification/spec_overview',
       ],
+      link: {
+        type: 'doc',
+        id: 'specification/index',
+      },
     },
     {
       type: 'category',
