@@ -63,10 +63,10 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'Test lab',
+        title: '',
         logo: {
-          alt: 'Logo',
-          src: 'img/logo.png',
+          alt: 'Fintan',
+          src: 'img/fintan-logo.jpg',
         },
         items: [
           {
@@ -112,7 +112,7 @@ const config = {
           // },
 
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} センシングIoT標準利活用コンソーシアム Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} TIS Inc. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,
