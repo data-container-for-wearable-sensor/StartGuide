@@ -48,6 +48,10 @@ const sidebars = {
         'firststep/index',
         'expansion_guide/index',
       ],
+      link: {
+        type: 'doc',
+        id: 'environment/test_lab',
+      },
     },
   ],
 };
