@@ -1,6 +1,6 @@
-# はじめに
+# Introduction
 
-本サイト(Test Lab Tutorial Page)は現在(2023 年時点) `IEC 63430 Data container format for wearable sensor` を普及啓発する目的で作成されています。
+本サイト(Test Lab Tutorial Page)は`IEC 63430 Data container format for wearable sensor` を普及啓発する目的で作成されています。
 
 ## Test Lab Tutorial Page
 
