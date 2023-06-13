@@ -22,7 +22,6 @@ const sidebars = {
       type: 'category',
       label: 'Introduction',
       items: [
-        'intro/index',
         'intro/overview',
       ],
       link: {
