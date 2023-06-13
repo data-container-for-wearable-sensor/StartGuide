@@ -3,8 +3,9 @@
 ここではテストラボの全体像を説明します。
 テストラボでは以下の情報やコンテンツをを提供します。
 
+- Introduction
+  - 全体概要
 - IEC 63430 の概要
-  - IEC 63430 とは
   - IEC 63430 Specification Overview
 - Test Lab System
   - 環境構築手順
