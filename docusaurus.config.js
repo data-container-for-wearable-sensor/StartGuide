@@ -65,8 +65,8 @@ const config = {
       navbar: {
         title: '',
         logo: {
-          alt: 'Fintan',
-          src: 'img/fintan-logo.jpg',
+          alt: '',
+          src: 'img/logo.png',
         },
         items: [
           {
