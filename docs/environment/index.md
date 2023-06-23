@@ -32,7 +32,7 @@ docker compose でアプリケーションを動かします。
 まず、git で必要なファイルを取得(クローン)します。
 
 ```
-~$ git clone https://github.com/tech-sketch/wearable-sensing-data-container-format-for-iot.git
+~$ git clone https://github.com/sensing-iot-standard-consortium-ja/wearable-sensing-data-container-format-for-iot.git
 ```
 
 以下の手順で動作を確認

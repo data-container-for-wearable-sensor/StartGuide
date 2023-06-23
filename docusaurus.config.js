@@ -18,7 +18,7 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'tech-sketch', // Usually your GitHub org/user name.
+  organizationName: 'data-container-for-wearable-sensor', // Usually your GitHub org/user name.
   projectName: 'testlab-tutorial', // Usually your repo name.
   trailingSlash: false,
 
