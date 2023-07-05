@@ -28,6 +28,23 @@ const sidebars = {
       label: 'Specification',
       id: 'specification/spec_overview',
     },
+
+    {
+      type: 'category',
+      label: 'Handling Container',
+      items: [
+        {
+          type: 'doc',
+          label: '概要',
+          id: 'handling_guide/index',
+        },
+        {
+          type: 'doc',
+          label: '例',
+          id: 'handling_guide/index',
+        }
+      ]
+    },
     {
       type: 'category',
       label: 'Test Lab System',
@@ -59,11 +76,6 @@ const sidebars = {
           id: 'firststep/index',
         }
       ]
-    },
-    {
-      type: 'doc',
-      label: 'Handling Container',
-      id: 'expansion_guide/index'
     },
     {
       type: 'category',
