@@ -41,7 +41,7 @@ const sidebars = {
         {
           type: 'doc',
           label: '例',
-          id: 'handling_guide/index',
+          id: 'handling_guide/example',
         }
       ]
     },
