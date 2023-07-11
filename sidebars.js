@@ -40,7 +40,7 @@ const sidebars = {
         },
         {
           type: 'doc',
-          label: '例',
+          label: '事例',
           id: 'handling_guide/example',
         }
       ]
