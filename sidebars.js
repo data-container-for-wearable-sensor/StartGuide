@@ -58,21 +58,15 @@ const sidebars = {
           type: 'doc',
           label: '構成図',
           id: 'testlab_system/test_lab',
-        }
-      ]
-    },
-    {
-      type: 'category',
-      label: 'Tutorial',
-      items: [
-        {
-          type: 'doc',
-          label: '構築手順',
-          id: 'environment/index',
         },
         {
           type: 'doc',
-          label: '実行手順',
+          label: '構築手順',
+          id: 'testlab_system/environment',
+        },
+        {
+          type: 'doc',
+          label: '動作手順',
           id: 'firststep/index',
         }
       ]

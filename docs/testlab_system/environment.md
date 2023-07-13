@@ -1,5 +1,9 @@
 # 構築手順
 
+:::caution
+public.ecr.aws は手順上除去する。
+:::
+
 ## 動作環境
 
 動作は以下で行っている。
@@ -20,10 +24,10 @@
 
 テストラボシステムで実現できることの最も概要を示した図が以下です。
 
-![overview](overview.drawio.png)
+![overview](environment/overview.drawio.png)
 
-スマートフォンから送信されるセンサーのデータをコンテナで伝送し、クラウド側に蓄積します。  
-蓄積されたデータをブラウザ等のWebシステムで可視化することができます。
+スマートフォンのセンサーデータをコンテナで伝送し、クラウド側に蓄積します。  
+蓄積されたデータはブラウザ等のWebシステムで可視化することができます。
 
 
 ## 起動手順
@@ -32,14 +36,14 @@ docker compose でアプリケーションを動かします。
 まず、git で必要なファイルを取得(クローン)します。
 
 ```
-~$ git clone https://github.com/sensing-iot-standard-consortium-ja/wearable-sensing-data-container-format-for-iot.git
+~$ git clone https://github.com/sensing-iot-standard-consortium-ja/test-lab-system.git
 ```
 
 以下の手順で動作を確認
 
 ```
-~$ cd wearable-sensing-data-container-format-for-iot/
-~/wearable-sensing-data-container-format-for-iot$ docker compose up -d
+cd test-lab-system/
+~/testlab-tutorial$ docker compose up -d
 ```
 
 実行結果の確認
@@ -93,40 +97,43 @@ container-consumer が `Restarting` になっているのはこの後の手順�
 
 ## 起動後の確認
 
-いくつかの画面が開いています。正しく動作していると以下の URL から起動画面が確認できます。
+動作確認のため、ブラウザからWebアプリケーションを開きます。
+正しく動作していると以下の URL から確認できます。
+
 Google Chrome で以下のページを開いてみてください。
 
-- [http://localhost:8080/](http://localhost:8080/)
-  ![ApacheKafkaUI](ui4apachekafka.png)
-- [http://localhost:3000/](http://localhost:3000/)
-  ![Grafana](grafana.png)
-- [http://localhost:30002/](http://localhost:30002/)
-  ![IotRegisitory](iot-registory.png)
-- [http://localhost:1188/](http://localhost:1188/)
-  ![TestlabSensor](testlab-sensor.png)
+1. [http://localhost:8080/](http://localhost:8080/)
+  ![ApacheKafkaUI](environment/ui4apachekafka.png)
+1. [http://localhost:3000/](http://localhost:3000/)
+  ![Grafana](environment/grafana.png)
+1. [http://localhost:30002/](http://localhost:30002/)
+  ![IotRegisitory](environment/iot-registory.png)
+1. [http://localhost:1188/](http://localhost:1188/)
+  ![TestlabSensor](environment/testlab-sensor.png)
 
 ## 初期設定手順
 
 サンプルアプリのデータを可視化するまでの手順を示します。
 
-### Kafka でトピックを確認
+### KafkaUI でのKafkaの設定
 
+Kafka の設定をします。  
+Kafka に複数のプロセス間のデータやり取りのハブになります。
+Kafka ではトピックに対し、データを提供する Producer とデータを利用する Consumer が存在します。  
+ここでは、準備しているConsumerがコンテナを入力として取り扱えるように、トピックを作成します。
 KafkaUI を用いてトピックの状況を確認します。
 
-### トピックの確認（変更前）
-
-Kafka の設定をします。
-Kafka ではトピックに対し、データを提供する Producer とデータを利用する Consumer が存在します。
+### 変更前のトピックの確認
 
 以下の KafkaUI の画面より、現在存在するトピックを確認します。
 ページを開いた後、 `Show Internal Topics` を無効化すると 4 つのトピックが表示されています。
 
 - [http://localhost:8080/ui/clusters/local/topics](http://localhost:8080/ui/clusters/local/topics)
-  ![kafkaui1](kafka_ui1.png)
+  ![kafkaui1](environment/kafka_ui1.png)
 
 ### トピックの追加(データの送信)
 
-この Kafka の環境は、未知のトピックを投入された場合、自動的に新たなトピックを追加する設定をしてあります。
+この環境は、未登録のトピックを投入した場合、自動的に新たなトピックを追加する設定をしてあります。
 そこで、サンプルアプリからデータを送ることでトピックを追加します。
 
 1. データ送信のページを開く  
@@ -136,15 +143,19 @@ Kafka ではトピックに対し、データを提供する Producer とデー�
 3. `単発送信` を押下  
    サンプルアプリから Kafka に１つデータを送信
 
-![サンプルアプリ](send_example_data.png)
+![サンプルアプリ](environment/send_example_data.png)
 
 ### トピックの作成確認
 
 KafkaUI を開き画面を更新します。  
 `json_mb_ctopic` と `mb_ctopic` の二つのトピックが増えていれば期待通りです。
-１分程度時間がかかる可能性があります。
+確認できるまで１分程度時間がかかる可能性があります。
 
-![kafkaui2](kafka_ui2.png)
+![kafkaui2](environment/kafka_ui2.png)
+
+ここでは `mb_ctopic` というトピックに発行されたデータを、
+コンテナ処理基盤
+
 
 ```
 $ docker compose ps container-consumer
@@ -163,7 +174,7 @@ kafka に届いたデータを Avro という Kafka でよく用いられるデ�
   [http://localhost:8080/ui/clusters/local/ksqldb/query](http://localhost:8080/ui/clusters/local/ksqldb/query)
 
 - 画像のようなページが表示される
-  ![](ksql_query_page.png)
+  ![](environment/ksql_query_page.png)
 
 - Stream を作成する（１つ目）  
   以下の ksql クエリをコピーペーストし、`Execute` を押下
@@ -188,7 +199,7 @@ CREATE STREAM stream_mb_topic
 - 実行結果の確認（１つ目）
 
 画像の下のように `SUCCESS Stream created` と表示される。
-![](ksql_execute.png)
+![](environment/ksql_execute.png)
 
 - Stream を作成する（２つ目）
   同様にもう一つクエリを実行する。
@@ -215,7 +226,7 @@ FROM stream_mb_topic as s;
 show streams;
 ```
 
-![picture 23](show_streams.png)  
+![picture 23](environment/show_streams.png)  
 画像の下部のように`STREAM_MB_CTOPIC` と`AVRO_MB_CTOPIC` が表示されれば成功。
 
 ### データの Grafana への転送
@@ -288,7 +299,7 @@ Kafka の Connector を設定。
    Grafana 上で画面が可視化される。  
    画面は 5 秒に 1 回の更新がされるのでデータ送信後 5 秒以内に表示される。  
    (画面右上から 1s に変更可)
-   ![picture 24](grafana.png.png)
+   ![picture 24](environment/grafana_graph.png)
 
 ## スキーマリポジトリ
 
@@ -299,7 +310,7 @@ Kafka の Connector を設定。
 1. サンプルデータの取得  
    サンプルアプリから送信されるデータのスキーマ情報をまず定義します。
    以下のバイナリデータはコンテナ化されたタイムスタンプ付きの６軸のデータです。  
-   [Download(ExampleContainer)](mobile_acce.bin)  
+   [Download(ExampleContainer)](mobile_acce.cntr)  
    このファイルをサンプルコンテナと今後呼びます。
 
 1. スキーマリポジトリの動作確認  
@@ -314,11 +325,11 @@ Kafka の Connector を設定。
 
 1. コンテナデータの読み込み  
    初期起動時には画面の右上ボタンを押下しダウンロードしたファイルを読み込みます。  
-   ![LoadFileButton](iot-repository-loaddata.png)
+   ![LoadFileButton](environment/iot-repository-loaddata.png)
 
 前述のサンプルコンテナを読み込むと、以下のようにプレビューされます。
 
-![ExampleSchema](iot-repository-example.png)
+![ExampleSchema](environment/iot-repository-example.png)
 
 サンプルコンテナに対応するスキーマファイルは、リポジトリに内蔵されているため、対応するコンテナを読み込むことでスキーマファイルが読み込まれます。
 `dt, x, y, z, alpha, beta, gamma` の７つのフィールドが定義され、サンプルコンテナに適用された結果が `Data` や `Raw` で確認できます。
@@ -355,10 +366,10 @@ docker compose を実行するshellで以下を実行し、環境変数に AuthT
 - docker compose で ngrok を実行する  
   `docker compose -f compose-dev.yaml run ngrok` を実行する。  
   実行すると以下のような画面が表示される。
-  ![ngrok](ngrok.png)  
+  ![ngrok](environment/ngrok.png)  
   `Forwarding` に表示される URL をスマートフォンで表示する。
 
-#### センサーデータの送信
+### センサーデータの送信
 
 画面下部のモーションの許可を押下するとセンサーデータ取得のダイアログが表示されます。
 許可をするとセンサーデータが取得できるようになります。
