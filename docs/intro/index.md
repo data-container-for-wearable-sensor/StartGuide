@@ -9,7 +9,7 @@ Test Lab Tutorial Page は 以下を提供します。
 
   - Introduction  
     このページの全体像  
-  - Specification  
+  - Specification Overview  
     コンテナフォーマットの仕様概要
   - Handling Container  
     - 概要  
