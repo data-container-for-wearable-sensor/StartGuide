@@ -1,14 +1,14 @@
 # 構築手順
 
-:::caution
-public.ecr.aws は手順上除去する。
-:::
-
 ## 動作環境
+
+テストラボシステムは一般的なWindowsの動作するPC上で動作させることができ、
+本手順は一般的なPC上で動作手順である。
 
 動作は以下で行っている。
 
 - 基盤の実行環境
+  - Windows11 Pro
   - WSL2(Ubuntu 22.04)
   - Docker
 - 接続クライアント
@@ -20,10 +20,12 @@ public.ecr.aws は手順上除去する。
 - git
 - docker
 
-## システム構成(詳細)
+## システム構成
 
-テストラボシステムで動作させ、設定を要するものは以下です。
-それぞれの枠は概要で示した４つの機能の枠組みです。
+構成図は以下で３つの機能がメッセージング機能を通してやり取りする構成になっています。
+![](environment/overview.drawio.png)
+
+この４つの機能をより詳細に示したのが以下です。
 
 ![overview](environment/system_detail.drawio.png)
 
@@ -76,9 +78,24 @@ test-lab-system-zookeeper-1            confluentinc/cp-zookeeper:7.1.0          
 </code>
 </pre>
 
+</details>
+
+複数のコンテナが動作していますがこの後の手順に用いるものや画面を持つものを示します。
+
+- スマートフォンセンサー機能
+  - test-lab-system-websensor-1: スマートフォンセンサー機能を提供するWebアプリケーション
+- コンテナ処理機能
+  - test-lab-system-container-consumer-1: コンテナ処理機能。メッセージング機能より受取って、スキーマリポジトリを参照して、jsonに変換しメッセージング機能に戻す
+  - test-lab-system-schema-repository-1: スキーマリポジトリ。リクエストに従ってスキーマファイルを応答する
+- メッセージング機能
+  - test-lab-system-kafka-ui-1: kafkaの管理用のGUI(ksqlやJDBC Sinkの設定はこの画面を経由して行う)
+- 可視化機能
+  - test-lab-system-grafana-1: 可視化機能を提供するWebアプリケーション
+  - test-lab-system-postgres-1: メッセージング機能から受け取ったデータを格納するDB
+  
 container-consumer が再起動を繰り返すのはこの後の手順で是正するのでこの時点ではOKです。  
 この後のトピック作成手順の完了後Statusが `Up` になります。
-</details>
+
 
 ## 起動後の確認
 
@@ -102,7 +119,7 @@ Google Chrome で以下のページを開いてみてください。
 
 サンプルアプリのデータを可視化するまでの手順を示します。
 
-### KafkaUI でのメッセージングの設定
+## メッセージング機能とコンテナ処理機能間の設定
 
 メッセージングに用いるソフトウェアのKafka の設定をします。  
 Kafka に複数のプロセス間のデータやり取りのハブになります。
@@ -110,7 +127,7 @@ Kafka ではトピックに対し、データを提供する Producer とデー�
 ここでは、準備しているConsumerがコンテナを入力として取り扱えるように、トピックを作成します。
 KafkaUI を用いてトピックの状況を確認します。
 
-### 変更前のトピックの確認
+### 変更前の設定確認
 
 以下の KafkaUI の画面より、現在存在するトピックを確認します。
 ページを開いた後、 `Show Internal Topics` を無効化すると 4 つのトピックが表示されています。
@@ -118,7 +135,7 @@ KafkaUI を用いてトピックの状況を確認します。
 - [http://localhost:8080/ui/clusters/local/topics](http://localhost:8080/ui/clusters/local/topics)
   ![kafkaui1](environment/kafka_ui1.png)
 
-### トピックの追加(データの送信)
+### 設定変更（トピックの追加)
 
 この環境は、未登録のトピックを投入した場合、自動的に新たなトピックを追加する設定をしてあります。
 そこで、サンプルアプリからデータを送ることでトピックを追加します。
@@ -132,7 +149,7 @@ KafkaUI を用いてトピックの状況を確認します。
 
 ![サンプルアプリ](environment/send_example_data.png)
 
-### トピックの作成確認
+### 設定変更結果確認
 
 KafkaUI を開き画面を更新します。  
 `json_mb_ctopic` と `mb_ctopic` の二つのトピックが増えていれば期待通りです。
@@ -145,9 +162,9 @@ KafkaUI を開き画面を更新します。
 
 また、この手順でcontainer-consumerが再起動しないようになります。
 
-## 可視化画面へデータを送る
+## メッセージング機能と可視化機能間の設定
 
-kafka に届いたデータを Avro という Kafka でよく用いられるデータに変換し、可視化画面用の DB に Sink する設定を行う。
+kafka に届いたデータを Avro というデータ形式に変換し、可視化画面用の DB に Sink する設定を行う。
 
 ### データ変換の登録
 
@@ -252,7 +269,7 @@ Kafka の Connector を設定。
 
 `avro_mb_jtopic` という Connector が存在すれば OK
 
-### 可視化(Grafana)の設定
+## 可視化機能の設定
 
 データを可視化する画面へアクセスする。
 改めて設定する項目はないが、アプリケーションの動作確認として以下を実施する。
@@ -284,10 +301,12 @@ Kafka の Connector を設定。
    (画面右上から 1s に変更可)
    ![picture 24](environment/grafana_graph.png)
 
-## コンテナ処理機能 スキーマリポジトリ
+## コンテナ処理機能の設定
+
+###  スキーマリポジトリの動作確認
 
 スキーマリポジトリには、
-デフォルトでいくつかのデータが入っているため、改めて設定する必要がある項目はない。  
+デフォルトでいくつかのスキーマが定義されているため、改めて設定する必要がある項目はない。  
 しかし、アプリケーションの動作確認として以下を実施する。
 
 1. サンプルデータの取得  
@@ -298,7 +317,7 @@ Kafka の Connector を設定。
 
 :::caution
 サンプルコンテナは、[Handling Containerで示された仕様](../handling_guide/)と差異がある。  
-Data Id Lengthフィールドがなく、
+Data Id Lengthフィールドがない。
 Data Id Length は 0x10(16)と扱われるデータである。
 :::
 
@@ -326,23 +345,26 @@ Data Id Length は 0x10(16)と扱われるデータである。
 下にスクロールすると、サンプルコンテナのヘッダ情報も確認できます。
 
 :::caution
-コンテナヘッダは[Handling Containerで示された仕様](../handling_guide/)と差異がある。  
-- Container Typeに仕様上認めてない値が入っている。
+コンテナヘッダは[Handling Containerで示された仕様](../handling_guide/)と差異があるバージョンで実装している。
+
+- Container Typeに仕様上認められてない値が入っている。
 - Data Index フィールドはData Id Typeとリネームされている。
 - Data Id Length フィールドがない。
 :::
 
 スキーマリポジトリの確認は以上です。
 
-### センサーとの接続
+## スマートフォンセンサ機能の設定
 
 スマートフォンからジャイロ(傾き)と加速度のセンサーデータを送るための設定をします。
 
-ここまで作った環境にスマートフォンからインターネット経由(要 https)でアクセスする必要があるため、外部のWeb サービスを利用します。
+ここまで作った環境にスマートフォンからhttpsでアクセスする必要があるため、外部のWeb サービスを利用します。
 
-> センサーデータ（ジャイロ、加速度）を取得する際に、ブラウザのセキュリティが要求する事項に対応するための対応です。
+:::note
+ブラウザのセキュリティ機能が要求する事項に対応するための対応です。
+:::
 
-### ngrok によるアクセス
+### ngrok によるhttpsアクセス
 
 ngrok を利用することで、ローカルで動作しているセンサーデータを送信するためのWebアプリケーションをインターネット経由でアクセスできるようにすることで、スマートフォンからセンサーデータを送信できるようにします。
 
@@ -350,7 +372,7 @@ ngrok を利用することで、ローカルで動作しているセンサー�
   [https://ngrok.com/](https://ngrok.com/) で登録します。
 
 - ngrok の AuthTokens の取得
-  [https://dashboard.ngrok.com/tunnels/authtokens](https://dashboard.ngrok.com/tunnels/authtokens)
+  [https://dashboard.ngrok.com/get-started/your-authtoken](https://dashboard.ngrok.com/get-started/your-authtoken)
   で Authtokens を発行する
 
 - AuthTokens を設定  
@@ -359,7 +381,7 @@ docker compose を実行するshellで以下を実行し、環境変数に AuthT
   export NGROK_AUTHTOKEN={発行したAuthToken}
   ```
 
-  `compose-dev.yaml` から利用する環境変数 NGROK_AUTHTOKEN に AuthTokens を書き込む。
+  環境変数 NGROK_AUTHTOKEN に AuthTokens を書き込む。`compose-dev.yaml` からこの環境変数を利用してngrokを利用できる。
 
 - docker compose で ngrok を実行する  
   `docker compose -f compose-dev.yaml run ngrok` を実行する。  
@@ -378,7 +400,7 @@ docker compose を実行するshellで以下を実行し、環境変数に AuthT
 - 送信するデータをデフォルト値 `container` であることを確認
 - `定期送信` にチェックを入れる
 
-これによってセンサデータを連続で送信できるようになります。
+これによってセンサデータを連続で送信できるようになる。
 
-[Grafana http://localhost:3000/](http://localhost:3000/) に設定してあるダッシュボードから確認できます。  
-描画データの更新間隔を画面右上で設定できるので5s(5秒)を 1s(1秒)にするとより体感が良くなる。
+[Grafana http://localhost:3000/](http://localhost:3000/) に設定してあるダッシュボードから確認できる。  
+描画データの更新間隔を画面右上で設定できるので5s(5秒)を 1s(1秒)にするとよりスムースに表示が可能。
