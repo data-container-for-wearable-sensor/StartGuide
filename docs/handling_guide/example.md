@@ -29,12 +29,13 @@
 
 1. Payload  
 まずコンテナデータにしたいPayloadを持ってくる。  
-コンテナに入れるときにPayloadがどのようなデータ構造であるかは。
+コンテナに入れるときにPayloadがどのようなデータ構造であるかは問わない。  
 コンテナにいれたい `0x38` byteのデータがあるものとする。  
 
 1. Container Type  
 事前に決めてよい。  
-今回は `0xAAAA` とする
+今回は[仕様の中](../handling_guide#container-type
+)から `0xAAAA` を選択する。
 
 1. Container Length  
 今回は、コモンヘッダ＋Data IDの長さを16とする。  

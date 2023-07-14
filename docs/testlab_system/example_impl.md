@@ -16,7 +16,7 @@
 
 具体的なコンテナデータの作成例は以下である。
 
-[Download(ExampleContainer)](mobile_acce.cntr)  
+<!-- [Download(ExampleContainer)](mobile_acce.cntr)   -->
 
 上記のコンテナデータは以下のようになっている。
 
@@ -200,7 +200,7 @@ DataIndexとDataIdの組を含む要求に対して、スキーマリポジト�
 <!-- ## コンテナフォーマットを取り扱うシステムの構成
 
 環境構築で示したように、テストラボシステムは、以下のような構成となっている。
-![](/overview.drawio.png)
+![](./overview.drawio.png)
 
 コンテナフォーマットを取り扱うシステムの検証のためには以下の検討事項がある
 

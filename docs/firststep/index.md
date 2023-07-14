@@ -56,7 +56,7 @@
 ヘッダ部分である `type:`, `length:` にあたるデータは固定的なヘッダとなります。
 
 :::caution
-ここで作られているコンテナは[Handling Containerで示された仕様](../handling_guide/)と差異がある。  
+ここで作られているコンテナは[Handling Containerで示された仕様](handling_guide)と差異がある。  
 
 - Data Id Lengthフィールドがない。
 :::
@@ -66,22 +66,23 @@
 
 ![](./payload_example.png)
 
-それぞれ,以下であります。
+７つのフィールドがありますが、詳細は以下です。
 
-|名称|型|詳細|
-|-|-|-|
-|timestamp|uint64|1970/01/01からの経過ミリ秒数|
-|acce x| float64| 加速度センサーのx軸方向の値|
-|acce y| float64| 加速度センサーのy軸方向の値|
-|acce z| float64| 加速度センサーのz軸方向の値|
-|alpha | float64| 傾きセンサーのx軸方向の値|
-|beta  | float64| 傾きセンサーのy軸方向の値|
-|gamma | float64| 傾きセンサーのz軸方向の値|
+|名称|型|データ幅|詳細|
+|-|-|-|:-|
+|timestamp|符号なし整数|8|1970/01/01からの経過ミリ秒数|
+|acce x| 浮動小数|8| 加速度センサーのx軸方向の値|
+|acce y| 浮動小数|8| 加速度センサーのy軸方向の値|
+|acce z| 浮動小数|8| 加速度センサーのz軸方向の値|
+|alpha | 浮動小数|8| 傾きセンサーのx軸方向の値|
+|beta  | 浮動小数|8| 傾きセンサーのy軸方向の値|
+|gamma | 浮動小数|8| 傾きセンサーのz軸方向の値|
 
 :::note
+加速度やジャイロの値については、
 [MDNの方向および動きとして示されるデータ](
 https://developer.mozilla.org/ja/docs/Web/API/Device_orientation_events/Orientation_and_motion_data_explained)
-のページにより詳細な情報が記述されています。
+でより詳細な情報が記述されています。
 :::
 
 
