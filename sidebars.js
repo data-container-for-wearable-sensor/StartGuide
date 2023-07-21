@@ -25,8 +25,8 @@ const sidebars = {
     },
     {
       type: 'doc',
-      label: 'Specification Overview',
-      id: 'specification/spec_overview',
+      label: 'Features',
+      id: 'features/overview',
     },
 
     {
