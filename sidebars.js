@@ -35,7 +35,7 @@ const sidebars = {
       items: [
         {
           type: 'doc',
-          label: '概要',
+          label: '基礎知識',
           id: 'handling_guide/index',
         },
         {
