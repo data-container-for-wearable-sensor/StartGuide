@@ -17,10 +17,11 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/intro">
+            to="/docs/about">
             Documents📄
           </Link>
         </div>
+        <p>コンテナフォーマット(IEC63430)の理解促進、普及啓発、利活用促進のためのサイト</p>
       </div>
     </header>
   );
