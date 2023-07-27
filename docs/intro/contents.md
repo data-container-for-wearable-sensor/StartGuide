@@ -2,7 +2,7 @@
 ここではTest Lab Tutorial Pageの全体構成を示します。
 すべてのコンテンツはこの構成に従って作成されています。
 
-このページ、Tutorial: Test Lab. for Container Format は 以下を提供します。
+このページ、Essential of Container Format は 以下を提供します。
 
   - Introduction  
     コンテナフォーマットの概要と目的、解決する課題や解決方法を示します。
