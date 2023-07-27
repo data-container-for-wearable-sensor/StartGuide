@@ -6,8 +6,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Tutorial: Test Lab. for Container Format',
-  tagline: 'チュートリアル：コンテナフォーマットのテストラボ',
+  title: 'Test Lab. for Container Format',
+  tagline: 'コンテナフォーマット(IEC63430)の理解促進、普及啓発、利活用促進のためのサイト',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -72,7 +72,7 @@ const config = {
           {
             to: '/docs/about',
             position: 'left',
-            label: 'Tutorial: Test Lab. for Container Format',
+            label: 'Test Lab. for Container Format',
           },
           {
             href: 'https://github.com/sensing-iot-standard-consortium-ja',

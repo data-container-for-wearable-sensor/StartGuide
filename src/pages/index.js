@@ -21,7 +21,6 @@ function HomepageHeader() {
             Documents📄
           </Link>
         </div>
-        <p>コンテナフォーマット(IEC63430)の理解促進、普及啓発、利活用促進のためのサイト</p>
       </div>
     </header>
   );
