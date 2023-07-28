@@ -1,6 +1,6 @@
 # Versioning
 
-Testlabリソースの更新
+Test lab. Systemのバージョン状況
 
 ## NP版
 1.0.0 (New Proposal)版
