@@ -28,16 +28,16 @@ const sidebars = {
       label: 'Introduction',
       id: 'intro/index',
     },
-    {
-      type: 'doc',
-      label: 'Contents',
-      id: 'intro/contents',
-    },
-    {
-      type: 'doc',
-      label: 'Features',
-      id: 'features/overview',
-    },
+    // {
+    //   type: 'doc',
+    //   label: 'Contents',
+    //   id: 'intro/contents',
+    // },
+    // {
+    //   type: 'doc',
+    //   label: 'Features',
+    //   id: 'features/overview',
+    // },
 
     {
       type: 'category',
@@ -78,7 +78,12 @@ const sidebars = {
           type: 'doc',
           label: '動作手順',
           id: 'firststep/index',
-        }
+        },
+        {
+          type: 'doc',
+          label: 'Versioning',
+          id: 'testlab_system/versioning',
+        },
       ]
     },
     {
@@ -90,11 +95,7 @@ const sidebars = {
           label: 'License',
           id: 'etc/license',
         },
-        {
-          type: 'doc',
-          label: 'Versioning',
-          id: 'etc/versioning',
-        },
+
         {
           type: 'doc',
           label: 'Source Code',

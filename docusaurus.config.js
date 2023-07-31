@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Start Guide of Container Format',
-  tagline: 'コンテナフォーマット(IEC63430)の理解促進、普及啓発、利活用促進のためのサイト',
+  tagline: `コンテナフォーマットを理解し活用するための初心者向けのガイドです。`,
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
