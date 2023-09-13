@@ -1,7 +1,7 @@
 # License
 
-Start Guide of Container Formatで提供しているコンテンツは無償で利用できます。  
-Start Guide of Container Formatが利用している外部のプロダクト、サービス、OSS等は提供元のライセンスを確認ください。
+Start Guide of Container Format で提供しているコンテンツは無償で利用できます。  
+Start Guide of Container Format が利用している外部のプロダクト、サービス、OSS 等は提供元のライセンスを確認ください。
 
 ## Disclaimer
 
