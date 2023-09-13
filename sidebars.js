@@ -41,7 +41,7 @@ const sidebars = {
 
     {
       type: 'category',
-      label: 'Handling Container',
+      label: 'Container Format',
       items: [
         {
           type: 'doc',
