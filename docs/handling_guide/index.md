@@ -58,7 +58,7 @@ Data ID Type は Data ID の内容を示すデータです。
 ### Container Type
 
 Container Type は以下の８パターンのいずれかです。  
-それぞれ、リアルタイム処理、拡張ヘッダの有無、フラグメント有無を示している。
+それぞれ、リアルタイム処理、拡張パートの有無、フラグメント有無を示している。
 
 :::note コモンパート コンテナタイプ一覧
 |Container Type Value| Realtime / Non Realtime Process | Extended Attributes | Fragmentation |
