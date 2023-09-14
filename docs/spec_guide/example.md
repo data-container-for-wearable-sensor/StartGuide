@@ -28,7 +28,7 @@
    ここではセンサから取得した `0x38` byte のデータがあるものとします。
 1. Container Type  
    仕様の中から事前に決めます。
-   今回は[コンテナタイプの一覧](../handling_guide#container-type)から「リアルタイム扱いなし、拡張パートなし、コンテナの Fragment なし」の `0xAAAA` を選択します。  
+   今回は[コンテナタイプの一覧](../spec_guide#container-type)から「リアルタイム扱いなし、拡張パートなし、コンテナの Fragment なし」の `0xAAAA` を選択します。  
    このヘッダは実現するサービスによって自由に選択するものであり、
    センサの種類や装置のベンダー、作られるデータを根拠に選択するものではありません。
 
@@ -39,7 +39,7 @@
 
 1. Data Id Type  
    この例では、Data Id に UUID を利用します。  
-   [コンテナタイプの一覧](../handling_guide#data-id-type)
+   [コンテナタイプの一覧](../spec_guide#data-id-type)
    を参照すると、UUID を DataID として用いる場合は `0x00` とします。
 
 1. Data ID Length  

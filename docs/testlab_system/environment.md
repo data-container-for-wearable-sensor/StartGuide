@@ -314,7 +314,7 @@ Kafka の Connector を設定。
    このファイルをサンプルコンテナと呼ぶ。
 
 :::caution
-サンプルコンテナは、[Container Format で示された仕様](../handling_guide/)と差異がある。  
+サンプルコンテナは、[Container Format で示された仕様](../spec_guide/)と差異がある。  
 Data Id Length フィールドがない。
 Data Id Length は 0x10(16)と扱われるデータである。
 :::
@@ -343,7 +343,7 @@ Data Id Length は 0x10(16)と扱われるデータである。
 下にスクロールすると、サンプルコンテナのヘッダ情報も確認できます。
 
 :::caution
-コンテナヘッダは[Container Format で示された仕様](../handling_guide/)と差異があるバージョンで実装している。
+コンテナヘッダは[Container Format で示された仕様](../spec_guide/)と差異があるバージョンで実装している。
 
 - Container Type に仕様上認められてない値が入っている。
 - Data Index フィールドは Data Id Type とリネームされている。

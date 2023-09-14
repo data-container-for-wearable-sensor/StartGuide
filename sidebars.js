@@ -46,12 +46,12 @@ const sidebars = {
         {
           type: 'doc',
           label: '基礎知識',
-          id: 'handling_guide/index',
+          id: 'spec_guide/index',
         },
         {
           type: 'doc',
           label: '事例',
-          id: 'handling_guide/example',
+          id: 'spec_guide/example',
         }
       ]
     },
@@ -66,7 +66,7 @@ const sidebars = {
         },
         {
           type: 'doc',
-          label: '構成図',
+          label: '構成',
           id: 'testlab_system/test_lab',
         },
         {

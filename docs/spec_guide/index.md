@@ -141,4 +141,4 @@ Extended Header Length の後、Attribute Type, Attribute Length, Attribute Valu
 
 適用によって、名前とプリミティブな型を持つデータが取得できます。
 
-具体的なデータの事例として次の[事例ページ](./handling_guide/example)が理解の助けになります。
+具体的なデータの事例として次の[事例ページ](./spec_guide/example)が理解の助けになります。

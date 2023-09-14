@@ -58,7 +58,7 @@
 ヘッダ部分である `type:`, `length:` にあたるデータは固定的なヘッダとなります。
 
 :::caution
-ここで作られているコンテナは[Container Format で示された仕様](handling_guide)と差異がある。
+ここで作られているコンテナは[Container Format で示された仕様](spec_guide)と差異がある。
 
 - Data Id Length フィールドがない。
   :::
