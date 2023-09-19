@@ -70,7 +70,7 @@ const config = {
         },
         items: [
           {
-            to: '/docs/about',
+            to: '/docs/intro',
             position: 'left',
             label: 'Start Guide of Container Format',
           },

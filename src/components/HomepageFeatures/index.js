@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'ドキュメント',
+    title: 'コンテナフォーマットの説明',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
@@ -13,7 +13,7 @@ const FeatureList = [
     ),
   },
   {
-    title: 'テストラボシステム',
+    title: 'テストラボシステムの説明',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>

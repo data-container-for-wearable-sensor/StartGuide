@@ -20,25 +20,9 @@ const sidebars = {
   tutorialSidebar: [
     {
       type: 'doc',
-      label: 'About this site',
-      id: 'about/index',
-    },
-    {
-      type: 'doc',
       label: 'Introduction',
       id: 'intro/index',
     },
-    // {
-    //   type: 'doc',
-    //   label: 'Contents',
-    //   id: 'intro/contents',
-    // },
-    // {
-    //   type: 'doc',
-    //   label: 'Features',
-    //   id: 'features/overview',
-    // },
-
     {
       type: 'category',
       label: 'Container Format',

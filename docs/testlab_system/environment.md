@@ -31,6 +31,7 @@
 
 docker compose でアプリケーションを動かします。
 まず、git で必要なファイルを取得(クローン)します。
+この手順で複数のリポジトリを取得します。
 
 ```
 ~$ git clone --recursive https://github.com/sensing-iot-standard-consortium-ja/test-lab-system.git
@@ -77,7 +78,8 @@ test-lab-system-zookeeper-1 confluentinc/cp-zookeeper:7.1.0 "/etc/confluent/dock
 
 </details>
 
-複数のコンテナが動作していますがこの後の手順に用いるものや画面を持つものを示します。
+この時点で複数のアプリケーションが動作しています。
+この後の手順に用いるものや画面を持つものを示します。
 
 - スマートフォンセンサー機能
   - test-lab-system-websensor-1: スマートフォンセンサー機能を提供する Web アプリケーション
@@ -90,8 +92,8 @@ test-lab-system-zookeeper-1 confluentinc/cp-zookeeper:7.1.0 "/etc/confluent/dock
   - test-lab-system-grafana-1: 可視化機能を提供する Web アプリケーション
   - test-lab-system-postgres-1: メッセージング機能から受け取ったデータを格納する DB
 
-container-consumer が再起動を繰り返すのはこの後の手順で是正するのでこの時点では OK です。  
-この後のトピック作成手順の完了後 Status が `Up` になります。
+container-consumer が再起動を繰り返すします。
+この後の手順で是正するのでこの時点では許容してよいです。
 
 ## 起動後の確認
 
@@ -100,30 +102,35 @@ container-consumer が再起動を繰り返すのはこの後の手順で是正�
 
 Google Chrome で以下のページを開いてみてください。
 
-1. [http://localhost:1188/](http://localhost:1188/)
+1. スマートフォンセンサー機能：[http://localhost:1188/](http://localhost:1188/)
    ![TestlabSensor](environment/testlab-sensor.png)
-1. [http://localhost:30002/](http://localhost:30002/)
+1. スキーマリポジトリ：[http://localhost:30002/](http://localhost:30002/)
    ![IotRegisitory](environment/iot-registory.png)
-1. [http://localhost:3000/](http://localhost:3000/)
+1. 可視化機能：[http://localhost:3000/](http://localhost:3000/)
    ![Grafana](environment/grafana.png)
-1. [http://localhost:8080/](http://localhost:8080/)
+1. メッセージング機能(管理画面)[http://localhost:8080/](http://localhost:8080/)
    ![ApacheKafkaUI](environment/ui4apachekafka.png)
-
-それぞれの添え字は、システム構成(詳細)内の番号と対応しています。
 
 ## 初期設定手順
 
-サンプルアプリのデータを可視化するまでの手順を示します。
+ここまででテストラボシステムは起動しています。
+加えて必要な設定を行います。
 
-## メッセージング機能とコンテナ処理機能間の設定
+スマートフォンセンサ機能からデータを送信しデータを可視化するまでの手順を示します。
 
-メッセージングに用いるソフトウェアの Kafka の設定をします。  
+### メッセージング機能とコンテナ処理機能間の設定
+
+メッセージング機能とコンテナ処理機能間の設定を行います。
+
+<!-- メッセージングに用いるソフトウェアの Kafka の設定をします。
 Kafka に複数のプロセス間のデータやり取りのハブになります。
-Kafka ではトピックに対し、データを提供する Producer とデータを利用する Consumer が存在します。  
+Kafka ではトピックに対し、データを提供する Producer とデータを利用する Consumer が存在します。
 ここでは、準備している Consumer がコンテナを入力として取り扱えるように、トピックを作成します。
-KafkaUI を用いてトピックの状況を確認します。
+KafkaUI を用いてトピックの状況を確認します。 -->
 
-### 変更前の設定確認
+KafkaUI からメッセージング機能上にトピックを設定します。
+
+#### 変更前の設定確認
 
 以下の KafkaUI の画面より、現在存在するトピックを確認します。
 ページを開いた後、 `Show Internal Topics` を無効化すると 4 つのトピックが表示されています。
@@ -131,21 +138,23 @@ KafkaUI を用いてトピックの状況を確認します。
 - [http://localhost:8080/ui/clusters/local/topics](http://localhost:8080/ui/clusters/local/topics)
   ![kafkaui1](environment/kafka_ui1.png)
 
-### 設定変更（トピックの追加)
+#### 設定変更（トピックの追加)
 
-この環境は、未登録のトピックを投入した場合、自動的に新たなトピックを追加する設定をしてあります。
-そこで、サンプルアプリからデータを送ることでトピックを追加します。
+未登録のトピックでデータを投入した場合、自動的にトピックを追加する設定になっています。
+今回は、スマートフォンセンサ機能からデータを送ることでトピックを追加します。
+
+設定が目的なのでスマートフォンセンサ機能ですが PC から開いてください。
 
 1. データ送信のページを開く  
    [http://localhost:1188/ ](http://localhost:1188/)
 2. `値の更新` を押下  
-   加速度、傾きなどに適当な値が入る
+   加速度、傾きなどに適当な値が入ります
 3. `単発送信` を押下  
-   サンプルアプリから Kafka に１つデータを送信
+   サンプルアプリから Kafka に１つデータが送信されます
 
 ![サンプルアプリ](environment/send_example_data.png)
 
-### 設定変更結果確認
+### 設定変更語の設定結果確認
 
 KafkaUI を開き画面を更新します。  
 `json_mb_ctopic` と `mb_ctopic` の二つのトピックが増えていれば期待通りです。
