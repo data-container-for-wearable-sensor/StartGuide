@@ -1,4 +1,4 @@
-# Source Code
+# ソースコード
 
 # all
 

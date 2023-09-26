@@ -20,13 +20,18 @@ const sidebars = {
   tutorialSidebar: [
     {
       type: 'doc',
-      label: 'Introduction',
+      label: '導入',
       id: 'intro/index',
     },
     {
       type: 'category',
-      label: 'Container Format',
+      label: 'コンテナフォーマット',
       items: [
+        {
+          type: 'doc',
+          label: '課題と解決',
+          id: 'spec_guide/solution',
+        },
         {
           type: 'doc',
           label: '基礎知識',
@@ -34,14 +39,14 @@ const sidebars = {
         },
         {
           type: 'doc',
-          label: '事例',
+          label: '使用例',
           id: 'spec_guide/example',
         }
       ]
     },
     {
       type: 'category',
-      label: 'Test Lab System',
+      label: 'テストラボシステム',
       items: [
         {
           type: 'doc',
@@ -65,7 +70,7 @@ const sidebars = {
         },
         {
           type: 'doc',
-          label: 'Versioning',
+          label: 'バージョン情報',
           id: 'testlab_system/versioning',
         },
       ]
@@ -76,18 +81,18 @@ const sidebars = {
       items: [
         {
           type: 'doc',
-          label: 'License',
+          label: 'ライセンス',
           id: 'etc/license',
         },
 
         {
           type: 'doc',
-          label: 'Source Code',
+          label: 'ソースコード',
           id: 'etc/sourcecode',
         },
         {
           type: 'doc',
-          label: 'Links',
+          label: 'リンク集',
           id: 'etc/links',
         },
       ]

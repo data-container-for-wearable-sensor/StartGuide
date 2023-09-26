@@ -1,9 +1,11 @@
-# Versioning
+# バージョン情報
 
-Test lab. Systemのバージョン状況
+Test lab. System のバージョン状況
 
-## NP版
+## NP 版
+
 1.0.0 (New Proposal)版
 
-## IS版
+## IS 版
+
 標準化状況に合わせてソフトウェアの更新を検討
