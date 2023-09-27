@@ -20,7 +20,7 @@ const sidebars = {
   tutorialSidebar: [
     {
       type: 'doc',
-      label: '導入',
+      label: 'はじめに',
       id: 'intro/index',
     },
     {
