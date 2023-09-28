@@ -29,7 +29,7 @@ const sidebars = {
       items: [
         {
           type: 'doc',
-          label: '課題と解決',
+          label: '目的・課題・解決方法',
           id: 'spec_guide/solution',
         },
         {
