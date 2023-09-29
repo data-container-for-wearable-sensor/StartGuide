@@ -2,10 +2,10 @@
 
 ## 動作環境
 
-テストラボシステムは一般的な Windows の動作する PC 上で動作させることができ、
-本手順は一般的な PC 上で動作手順です。
+テストラボシステムは一般的な Windows の動作する PC 上で動作させることができます。
 
-動作は以下で行っています。
+docker の動作する一般的な PC であれば動作するように作成しています。
+動作確認は以下の環境で行っています。
 
 - 基盤の実行環境
   - Windows11 Pro
@@ -13,19 +13,35 @@
   - Docker
 - 接続クライアント
   - Google Chrome
-  - Safari(iPhone/iOS16)
+  - Safari(iPhoneSE2/iOS16)
 
-動作確認や手順の中では以下のコマンドおよび環境を用いるので事前に導入をします。
+動作確認や手順の中で、以下のコマンドを用いるので事前に導入をしてください。
 
 - git
 - docker
 
-## システム構成
+## 機能とシステム構成
 
-概要・目的からシステム構成を改めて示します。
+### 機能
 
-メッセージング機能をハブとして、各機能間を接続してシステムを実現しています。
-![](environment/overview.drawio.png)
+テストラボシステムが持つ機能は以下です。
+
+- スマートフォンのジャイロセンサ(加速度、傾き)を入力とします。
+- ジャイロセンサのデータをコンテナによって流通させます。
+- 流通させたコンテナから値を取り出し可視化します。
+
+### システム構成
+
+システム構成を改めて示します。
+
+![](environment/overview_on_pc.drawio.png)
+
+_図: システム構成_
+
+１つの PC の上でテストラボシステムを動作させます。
+テストラボシステム内はメッセージング機能をハブとして、各機能間を接続してシステムを実現しています。
+
+動作している環境にスマートフォンでアクセスする事で、スマートフォンのセンサ情報をシステムに取り込み蓄積し可視化を可能にします。
 
 ## 起動手順
 
@@ -37,20 +53,22 @@ docker compose でアプリケーションを動かします。
 ~$ git clone --recursive https://github.com/sensing-iot-standard-consortium-ja/test-lab-system.git
 ```
 
-以下の手順で動作を確認
+以下の手順で動作を確認します。
 
 ```
 ~$ cd test-lab-system/
 ~/testlab-tutorial$ docker compose up -d
 ```
 
-実行結果の確認
+実行結果を確認します。
 
 ```
 ~/testlab-tutorial$ docker compose ps -a
 ```
 
 で `container-consumer` 以外が `Up` のステータスになっていれば OK です。
+
+<!-- textlint-disable -->
 
 <details>
 <summary>出力結果の表示</summary>
@@ -78,13 +96,15 @@ test-lab-system-zookeeper-1 confluentinc/cp-zookeeper:7.1.0 "/etc/confluent/dock
 
 </details>
 
+<!-- textlint-enable -->
+
 この時点で複数のアプリケーションが動作しています。
 この後の手順に用いるものや画面を持つものを示します。
 
 - スマートフォンセンサー機能
   - test-lab-system-websensor-1: スマートフォンセンサー機能を提供する Web アプリケーション
 - コンテナ処理機能
-  - test-lab-system-container-consumer-1: コンテナ処理機能。メッセージング機能より受取って、スキーマリポジトリを参照して、json に変換しメッセージング機能に戻す
+  - test-lab-system-container-consumer-1: コンテナ処理機能。メッセージング機能よりコンテナデータを受取り、スキーマリポジトリを参照して、変換しメッセージング機能に戻す
   - test-lab-system-schema-repository-1: スキーマリポジトリ。リクエストに従ってスキーマファイルを応答する
 - メッセージング機能
   - test-lab-system-kafka-ui-1: kafka の管理用の GUI(ksql や JDBC Sink の設定はこの画面を経由して行う)
@@ -114,13 +134,13 @@ Google Chrome で以下のページを開いてみてください。
 ## 初期設定手順
 
 ここまででテストラボシステムは起動しています。
-加えて必要な設定を行います。
+加えて。
 
 スマートフォンセンサ機能からデータを送信しデータを可視化するまでの手順を示します。
 
 ### メッセージング機能とコンテナ処理機能間の設定
 
-メッセージング機能とコンテナ処理機能間の設定を行います。
+メッセージング機能とコンテナ処理機能間の設定をします。
 
 <!-- メッセージングに用いるソフトウェアの Kafka の設定をします。
 Kafka に複数のプロセス間のデータやり取りのハブになります。
@@ -157,8 +177,8 @@ KafkaUI からメッセージング機能上にトピックを設定します。
 ### 設定変更語の設定結果確認
 
 KafkaUI を開き画面を更新します。  
-`json_mb_ctopic` と `mb_ctopic` の二つのトピックが増えていれば期待通りです。
-確認できるまで１分程度時間がかかる可能性があります。
+`json_mb_ctopic` と `mb_ctopic` の 2 つのトピックが増えていれば期待通りです。
+確認できるまで１分程度かかる可能性があります。
 
 ![kafkaui2](environment/kafka_ui2.png)
 
@@ -169,7 +189,7 @@ KafkaUI を開き画面を更新します。
 
 ## メッセージング機能と可視化機能間の設定
 
-kafka に届いたデータを Avro というデータ形式に変換し、可視化画面用の DB に Sink する設定を行う。
+kafka に届いたデータを Avro というデータ形式に変換し、可視化画面用の DB に Sink するための設定をします。
 
 ### データ変換の登録
 
@@ -207,7 +227,7 @@ CREATE STREAM stream_mb_topic
 ![](environment/ksql_execute.png)
 
 - Stream を作成する（２つ目）
-  同様にもう一つクエリを実行する。
+  同様にもう 1 つクエリを実行する。
 
 ```
 CREATE STREAM stream_mb_topic_avro
@@ -272,7 +292,7 @@ Kafka の Connector を設定。
   以下のページを開く。  
   [http://localhost:8080/ui/clusters/local/connectors](http://localhost:8080/ui/clusters/local/connectors)
 
-`avro_mb_jtopic` という Connector が存在すれば OK
+`avro_mb_jtopic` という Connector が存在すれば OK です。
 
 ## 可視化機能の設定
 
@@ -321,13 +341,13 @@ Kafka の Connector を設定。
    このファイルをサンプルコンテナと呼ぶ。
 
 :::caution
-サンプルコンテナは、[Container Format で示された仕様](../spec_guide/)と差異がある。  
-Data Id Length フィールドがない。
-Data Id Length は 0x10(16)と扱われるデータである。
+サンプルコンテナは、[Container Format で示された仕様](../spec_guide/)と差異があります。  
+Data Id Length フィールドがないです。
+Data Id Length は 0x10(16)と扱われるデータです。
 :::
 
 1. スキーマリポジトリの動作確認  
-   スキーマリポジトリの確認を行います。  
+   スキーマリポジトリの確認します。  
    [http://localhost:30002/](http://localhost:30002/) にアクセス
 
 2. スキーマリポジトリのスキーマ確認  
@@ -365,9 +385,13 @@ Data Id Length は 0x10(16)と扱われるデータである。
 
 ここまで作った環境にスマートフォンから https でアクセスする必要があるため、外部の Web サービスを利用します。
 
+<!-- textlint-disable -->
+
 :::note
 ブラウザのセキュリティ機能が要求する事項に対応するための対応です。
 :::
+
+<!-- textlint-enable -->
 
 ### ngrok による https アクセス
 
