@@ -112,12 +112,12 @@ test-lab-system-zookeeper-1 confluentinc/cp-zookeeper:7.1.0 "/etc/confluent/dock
   - test-lab-system-grafana-1: 可視化機能を提供する Web アプリケーション
   - test-lab-system-postgres-1: メッセージング機能から受け取ったデータを格納する DB
 
-container-consumer が再起動を繰り返すします。
-この後の手順で是正するのでこの時点では許容してよいです。
+container-consumer が再起動を繰り返しますが、
+この後の手順で是正するのでこの時点では許容します。
 
-## 起動後の確認
+## 起動確認
 
-動作確認のため、ブラウザから Web アプリケーションを開きます。
+起動確認のため、ブラウザから Web アプリケーションを開きます。
 正しく動作していると以下の URL から確認できます。
 
 Google Chrome で以下のページを開いてみてください。
@@ -129,14 +129,16 @@ Google Chrome で以下のページを開いてみてください。
 1. 可視化機能：[http://localhost:3000/](http://localhost:3000/)
    ![Grafana](environment/grafana.png)
 1. メッセージング機能(管理画面)[http://localhost:8080/](http://localhost:8080/)
-   ![ApacheKafkaUI](environment/ui4apachekafka.png)
+   ![ApacheUI for Apache Kafka](environment/ui4apachekafka.png)
+
+上記のような画面が出れば、順調に進んでいます。
 
 ## 初期設定手順
 
 ここまででテストラボシステムは起動しています。
-加えて。
+これからは各種設定をします。
 
-スマートフォンセンサ機能からデータを送信しデータを可視化するまでの手順を示します。
+スマートフォンセンサ機能からセンサデータを送信し可視化するまでの手順を示します。
 
 ### メッセージング機能とコンテナ処理機能間の設定
 
@@ -146,17 +148,17 @@ Google Chrome で以下のページを開いてみてください。
 Kafka に複数のプロセス間のデータやり取りのハブになります。
 Kafka ではトピックに対し、データを提供する Producer とデータを利用する Consumer が存在します。
 ここでは、準備している Consumer がコンテナを入力として取り扱えるように、トピックを作成します。
-KafkaUI を用いてトピックの状況を確認します。 -->
+UI for Apache Kafka を用いてトピックの状況を確認します。 -->
 
-KafkaUI からメッセージング機能上にトピックを設定します。
+メッセージング機能上に、データのやり取りに用いるトピックを作成します。
 
-#### 変更前の設定確認
+#### 変更前の状態確認
 
-以下の KafkaUI の画面より、現在存在するトピックを確認します。
+以下の UI for Apache Kafka の画面より、現在存在するトピックを確認します。
 ページを開いた後、 `Show Internal Topics` を無効化すると 4 つのトピックが表示されています。
 
 - [http://localhost:8080/ui/clusters/local/topics](http://localhost:8080/ui/clusters/local/topics)
-  ![kafkaui1](environment/kafka_ui1.png)
+  ![UI for Apache Kafka1](environment/kafka_ui1.png)
 
 #### 設定変更（トピックの追加)
 
@@ -170,17 +172,18 @@ KafkaUI からメッセージング機能上にトピックを設定します。
 2. `値の更新` を押下  
    加速度、傾きなどに適当な値が入ります
 3. `単発送信` を押下  
-   サンプルアプリから Kafka に１つデータが送信されます
+   サンプルアプリから Kafka にデータが送信されます
 
 ![サンプルアプリ](environment/send_example_data.png)
+_スマートフォンセンサ機能の画面_
 
-### 設定変更語の設定結果確認
+### 設定変更語の設定状態確認
 
-KafkaUI を開き画面を更新します。  
+UI for Apache Kafka を開き画面を更新します。  
 `json_mb_ctopic` と `mb_ctopic` の 2 つのトピックが増えていれば期待通りです。
-確認できるまで１分程度かかる可能性があります。
+確認できるまで数分程度かかる可能性があります。
 
-![kafkaui2](environment/kafka_ui2.png)
+![](environment/kafka_ui2.png)
 
 ここでは `mb_ctopic` というトピックに発行されたコンテナを、
 コンテナ処理基盤(container-consumer)で処理してコンテナを json へ変換して `json_mb_ctopic` に投入している。
