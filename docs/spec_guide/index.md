@@ -13,53 +13,83 @@
 
 ![](container_three_element.drawio.png)
 
-それぞれの要素をもう少し詳しく見ていきましょう。
+_図 2-1. コンテナフォーマットのイメージ_
 
 ## コンテナフォーマット
 
-コンテナフォーマットは、ヘッダとペイロードの２つで構成されるデータ構造です。
-このフォーマットに従って作ったデータをコンテナデータと呼びます。
-
-1. ヘッダ
-2. ペイロード
+コンテナフォーマットは、ヘッダとペイロードで構成されるデータ構造です。
+このフォーマットに従ったデータをコンテナデータまたはコンテナと呼びます。
 
 ![コンテナフォーマットのイメージ](container.drawio.png)
 
-_図 1. コンテナフォーマットのイメージ_
+_図 2-2. コンテナフォーマットのイメージ_
+
+以下、ヘッダのフォーマットについて記述する。
 
 ### ヘッダのフォーマット
 
-続いてヘッダの中身について説明します。
+ヘッダの中身について説明します。
 ヘッダは 1 つもしくは 2 つのパートで構成され、コモンパート(Common Part)と呼ばれる必須部分と、拡張パート(Extended Part)と呼ばれる任意部分があります。
 
 ![コンテナフォーマット](container_format.drawio.png)  
-_図 2 コンテナフォーマットの構成_
+_図 2-2 コンテナフォーマットの構成_
 
 コンテナは、仕様に従ったヘッダと自由なペイロードから構成されます。
 コンテナを作るためには運びたいデータに対してヘッダを付与することが必要です。
 
-ヘッダの仕様の詳細は以下です。
-コモンパートと呼ばれる必須部分から示します。
-
-:::note _コモンパート_
+ヘッダのコモンパートと呼ばれる必須部分を図:2-3 コモンパートの構成と表:2-1 コモンパート一覧で示します。
 
 ![コモンパート](common_part.drawio.png)
 
-| header field name |                  length | description                                      |
-| ----------------- | ----------------------: | ------------------------------------------------ |
-| Container Type    |                  2 byte | 詳細は後述                                       |
-| Container Length  |                  2 byte | コンテナのヘッダからペイロードすべてを含めた長さ |
-| Data Id Type      |                   1byte | Data ID の種類を指定                             |
-| Data Id Length    |                   1byte | Data ID の長さを設定                             |
-| Data Id           | {{Data Id length}} byte | ペイロードのデータ型に対応する識別子             |
+_図 2-3: コモンパートの構成_
 
+:::note _表 2-1: コモンパート一覧_
+
+| header field name |                  length | description                                                            |
+| ----------------- | ----------------------: | ---------------------------------------------------------------------- |
+| Container Type    |                  2 byte | コンテナタイプを設定。[詳細は Cointainer Type に記述](#container-type) |
+| Container Length  |                  2 byte | コンテナのヘッダからペイロードすべてを含めた長さ                       |
+| Data Id Type      |                   1byte | Data ID の種類を設定。[詳細は Data ID Type](#data-id-type)に記述       |
+| Data Id Length    |                   1byte | Data ID の長さを設定                                                   |
+| Data Id           | {{Data Id length}} byte | ペイロードのデータ構造の識別子                                         |
+
+:::
+
+#### Container Type
+
+Container Type は以下の８パターンのいずれかです。  
+それぞれ、リアルタイム処理、拡張パートの有無、フラグメント有無を示している。  
+表:2-2 に Container Type の一覧を示します。
+
+:::note _表 2-2: コモンパート コンテナタイプ一覧_
+
+<details>
+<summary>
+コモンパート Container Type 一覧
+</summary>
+<div>
+
+| Container Type Value | Realtime / Non Realtime Process | Extended Attributes | Fragmentation |
+| -------------------- | ------------------------------- | ------------------- | ------------- |
+| 0x5555               | Real time                       | None                | Unfragmented  |
+| 0x3333               | Real time                       | None                | Fragmented    |
+| 0x6666               | Real time                       | Yes                 | Unfragmented  |
+| 0x0F0F               | Real time                       | Yes                 | Fragmented    |
+| 0xAAAA               | Non real time                   | None                | Unfragmented  |
+| 0xCCCC               | Non real time                   | None                | Fragmented    |
+| 0x9999               | Non real time                   | Yes                 | Unfragmented  |
+| 0xF0F0               | Non real time                   | Yes                 | Fragmented    |
+
+</div>
+</details>
 :::
 
 #### Data ID Type
 
-Data ID Type は Data ID の種類を示すデータです。
+Data ID Type は Data ID の種類を示すデータで、Data ID が UUID であるといった情報を持ちます。  
+表:2-3 に Data ID Type の一覧を示します。
 
-:::note
+:::note _表 2-3: コモンパート Data ID Type 一覧_
 
 <details>
 <summary>
@@ -82,34 +112,21 @@ Data ID Type は Data ID の種類を示すデータです。
 </details>
 :::
 
-#### Container Type
-
-Container Type は以下の８パターンのいずれかです。  
-それぞれ、リアルタイム処理、拡張パートの有無、フラグメント有無を示している。
-
-:::note _コモンパート コンテナタイプ一覧_
-|Container Type Value| Realtime / Non Realtime Process | Extended Attributes | Fragmentation |
-|-|-|-|-|
-|0x5555|Real time|None|Unfragmented|
-|0x3333|Real time|None|Fragmented|
-|0x6666|Real time|Yes|Unfragmented|
-|0x0F0F|Real time|Yes|Fragmented|
-|0xAAAA|Non real time|None|Unfragmented|
-|0xCCCC|Non real time|None|Fragmented|
-|0x9999|Non real time|Yes|Unfragmented|
-|0xF0F0|Non real time|Yes|Fragmented|
-:::
-
 #### Extended Header
 
 コモンパートの[コンテナタイプ](#container-type)で、Extended Attributes が `YES` の場合は、
 コモンパートの後に拡張パートが続きます。  
 `No` の場合は、拡張パートは省略されます。
 
-:::note 拡張パート
+以下に拡張パートの説明をします。
+
 ![拡張パート](extend_part.drawio.png)
 
+_図 2-4: 拡張パートの構成_
+
 拡張パートは、Extended Header Length の後、(Attribute Type, Attribute Length, Attribute Value) の 3 つ組の繰り返しで構成される。
+
+:::note _表 2-4: 拡張パート一覧_
 
 | header field name      | length | description                          |
 | ---------------------- | -----: | ------------------------------------ |
@@ -122,21 +139,22 @@ Container Type は以下の８パターンのいずれかです。
 
 ### ペイロード
 
-ペイロードについては、コンテナフォーマットの仕様上決められた型や構造はありません。
-あえて言うなら、バイト列として表現されるものと言えます。
+ペイロードは、データ構造を特定しないフリーフォーマットのバイト列です。
 
-ペイロードには通常何らかの情報を抽出できるバイト列が格納されています。
-ペイロードが決まった構造を持たないという特徴は、
+ペイロードが決まったデータ構造を持たないという特徴は、
 **データに対して仕様に沿ったヘッダをつけること** でどのようなデータもコンテナフォーマットに対応できることを意味します。
 
 ## スキーマリポジトリ
 
-スキーマリポジトリは、スキーマ情報を管理し提供することでコンテナを扱うための情報を提供します。
+スキーマリポジトリは、(後述する)スキーマ情報を管理します。
+コンテナを使う環境へスキーマ情報を提供することで、標準化された処理を行う事が出来ます。
 
-コンテナヘッダを元に対応するスキーマ情報を提供し、
-コンテナから情報を取り出す手助けをします。
+コンテナヘッダに対応するスキーマ情報を提供することで、
+コンテナを使えるようにします。
 
-![スキーマとスキーマリポジトリ](repository.drawio.png)
+![スキーマリポジトリの役割](repository.drawio.png)
+
+_図 2-5: スキーマリポジトリの役割_
 
 スキーマ情報をスキーマリポジトリから参照することで、
 異なる複数のベンダのセンサであっても共通処理で利用できるようになります。
@@ -146,15 +164,9 @@ Container Type は以下の８パターンのいずれかです。
 
 スキーマ情報はコンテナのペイロードから、情報を取り出すためのメタ情報です。
 
-ペイロードは決まった構造を持ちません。  
-しかし、コンテナが運ぶペイロードは何らかの構造を持ち情報を持ちます。
-
-ペイロードの構造はデバイスの実装によって異なります。
-コンテナを介さない場合は、ペイロードの構造や型をプログラマがドキュメント等から把握し、ペイロードを解析する必要がありました。
-
-一方、コンテナを用いる場合は、ペイロードの構造やデータ型をスキーマ情報として外部に定義し、これを利用します。
-
-コンテナとスキーマ情報を組み合わせ、決まった処理を行うことで、コンテナのペイロードから情報を取り出すことができます。
+前述のとおり、コンテナのペイロードはデータ構造が決まっていませんが、何らかのデータ構造を持ちます。
+ペイロードが持つデータ構造はベンダー等がスキーマ情報として作成します。
+スキーマ情報と標準化された手続きによって、コンテナのペイロードから情報を取り出すことができます。
 
 ![スキーマとペイロード](scheme.drawio.png)  
-_図 3. スキーマ情報を利用してペイロードから情報を取り出すイメージ_
+_図 2-6. スキーマ情報を利用してペイロードから情報を取り出すイメージ_
