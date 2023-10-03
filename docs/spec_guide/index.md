@@ -13,7 +13,7 @@
 
 ![](container_three_element.drawio.png)
 
-_図 2-1. コンテナフォーマットのイメージ_
+_図 2-1. コンテナフォーマット規格の全体像_
 
 ## コンテナフォーマット
 
@@ -24,7 +24,7 @@ _図 2-1. コンテナフォーマットのイメージ_
 
 _図 2-2. コンテナフォーマットのイメージ_
 
-以下、ヘッダのフォーマットについて記述する。
+以下、ヘッダとペイロードのフォーマットについて順に記述する。
 
 ### ヘッダのフォーマット
 
@@ -34,26 +34,24 @@ _図 2-2. コンテナフォーマットのイメージ_
 ![コンテナフォーマット](container_format.drawio.png)  
 _図 2-2 コンテナフォーマットの構成_
 
-コンテナは、仕様に従ったヘッダと自由なペイロードから構成されます。
-コンテナを作るためには運びたいデータに対してヘッダを付与することが必要です。
-
-ヘッダのコモンパートと呼ばれる必須部分を図 2-3:コモンパートの構成と表 2-1:コモンパート一覧で示します。
+ヘッダのコモンパートと呼ばれる必須部分を図 2-3:コモンパートの構成と表 2-1:コモンパート フィールド一覧で示します。
 
 ![コモンパート](common_part.drawio.png)
 
 _図 2-3: コモンパートの構成_
 
-:::note _表 2-1: コモンパート一覧_
+:::note _表 2-1: コモンパート フィールド一覧_
 
 | header field name |                  length | description                                                            |
 | ----------------- | ----------------------: | ---------------------------------------------------------------------- |
 | Container Type    |                  2 byte | コンテナタイプを設定。[詳細は Cointainer Type に記述](#container-type) |
-| Container Length  |                  2 byte | コンテナのヘッダからペイロードすべてを含めた長さ                       |
+| Container Length  |                  2 byte | コンテナのヘッダからペイロードすべてを含めたバイト長                   |
 | Data Id Type      |                   1byte | Data ID の種類を設定。[詳細は Data ID Type](#data-id-type)に記述       |
-| Data Id Length    |                   1byte | Data ID の長さを設定                                                   |
+| Data Id Length    |                   1byte | Data ID のバイト長を設定                                               |
 | Data Id           | {{Data Id length}} byte | ペイロードのデータ構造の識別子                                         |
 
 :::
+//todo ペイロードのデータ構造の識別子？リポジトリのスキーマ情報の識別子？
 
 #### Container Type
 
@@ -86,7 +84,8 @@ Container Type は以下の８パターンのいずれかです。
 
 #### Data ID Type
 
-Data ID Type は Data ID の種類を示すデータで、Data ID が UUID であるといった情報を持ちます。  
+Data ID Type は Data ID の種類を示すデータです。  
+例えば、Data ID の種類の例としては、UUID や GTIN 等があります。
 表 2-3: に Data ID Type の一覧を示します。
 
 :::note _表 2-3: コモンパート Data ID Type 一覧_
@@ -114,11 +113,11 @@ Data ID Type は Data ID の種類を示すデータで、Data ID が UUID で�
 
 #### Extended Header
 
-コモンパートの[コンテナタイプ](#container-type)で、Extended Attributes が `YES` の場合は、
-コモンパートの後に拡張パートが続きます。  
+拡張パートはコモンパートの[コンテナタイプ](#container-type)が、Extended Attributes が `YES` の場合は、
+コモンパートの後に続きます。  
 `No` の場合は、拡張パートは省略されます。
 
-以下に拡張パートの説明をします。
+以下に拡張パートと呼ばれる必須部分を図 2-4:拡張パートの構成と表 2-4:拡張パート フィールド一覧で示します。
 
 ![拡張パート](extend_part.drawio.png)
 
@@ -126,18 +125,18 @@ _図 2-4: 拡張パートの構成_
 
 拡張パートは、Extended Header Length の後、(Attribute Type, Attribute Length, Attribute Value) の 3 つ組の繰り返しで構成される。
 
-:::note _表 2-4: 拡張パート一覧_
+:::note _表 2-4: 拡張パート フィールド一覧_
 
-| header field name      | length | description                          |
-| ---------------------- | -----: | ------------------------------------ |
-| Extended Header Length | 1 byte | 拡張パート全体のバイト長             |
-| Attribute Type         | 1 byte | 属性の種類                           |
-| Attribute Length       | 1 byte | 属性の長さ                           |
-| Attribute Value        |  Nbyte | 属性データ。{Attribute Length}の長さ |
+| header field name      | length | description                                            |
+| ---------------------- | -----: | ------------------------------------------------------ |
+| Extended Header Length | 1 byte | 拡張パート全体のバイト長 (L<sub>Extended Header</sub>) |
+| Attribute Type         | 1 byte | 属性の種類                                             |
+| Attribute Length       | 1 byte | 属性のバイト長（{L<sub>attr</sub>}）                   |
+| Attribute Value        |  Nbyte | 属性データ。                                           |
 
 :::
 
-### ペイロード
+### ペイロードのフォーマット
 
 ペイロードは、データ構造を特定しないフリーフォーマットのバイト列です。
 
@@ -158,7 +157,7 @@ _図 2-5: スキーマリポジトリの役割_
 
 スキーマ情報をスキーマリポジトリから参照することで、
 異なる複数のベンダのセンサであっても共通処理で利用できるようになります。
-これによって、複数ベンダのセンサを組み合わせて、フレキシブルにサービスを実現できます。
+これによって、複数ベンダのセンサを組み合わせたサービスを実現できます。
 
 ## スキーマ情報
 
