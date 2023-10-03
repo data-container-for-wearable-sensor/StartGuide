@@ -117,8 +117,8 @@ Data Index の `00` と DataID の `00 11 22 33 44 55 66 77 88 99 AA BB CC DD EE
 | 名称変更       | Data Index -> Data ID Type                               |
 | フィールド追加 | Data ID Length の追加                                    |
 | 仕様違反       | Container Type に認められてない値(`0x0000`)が入っている  |
-| 仕様削除       | Data Index の値に対応する形で Data Id の長さが決まる仕様 |
-| 仕様追加       | Data Id Length が DataId の長さとなる                    |
+| 仕様削除       | Data Index の値に対応する形で Data ID の長さが決まる仕様 |
+| 仕様追加       | Data ID Length が DataID の長さとなる                    |
 
 </div>
 </details>
@@ -188,9 +188,9 @@ Data Index <!-- Data ID Type --> と Data ID によって、スキーマリポ�
   ]
 ```
 
-また、スキーマファイルは、スキーマリポジトリごとに DataIndex<!-- Data Type-->と DataId の組に対して一意になるように管理されている。
+また、スキーマファイルは、スキーマリポジトリごとに DataIndex<!-- Data Type-->と DataID の組に対して一意になるように管理されている。
 
-DataIndex と DataId の組を含む要求に対して、スキーマリポジトリは対応するスキーマファイルを配布しコンテナデータを処理させることができる。
+DataIndex と DataID の組を含む要求に対して、スキーマリポジトリは対応するスキーマファイルを配布しコンテナデータを処理させることができる。
 
 ## まとめ
 

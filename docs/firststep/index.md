@@ -60,7 +60,7 @@
 :::caution
 ここで作られているコンテナは[Container Format で示された仕様](spec_guide)と差異がある。
 
-- Data Id Length フィールドがない。
+- Data ID Length フィールドがない。
   :::
 
 対して、Payload はセンサーの計測値を反映するため値が高頻度で更新されます。  

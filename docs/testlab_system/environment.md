@@ -345,8 +345,8 @@ Kafka の Connector を設定。
 
 :::caution
 サンプルコンテナは、[Container Format で示された仕様](../spec_guide/)と差異があります。  
-Data Id Length フィールドがないです。
-Data Id Length は 0x10(16)と扱われるデータです。
+Data ID Length フィールドがないです。
+Data ID Length は 0x10(16)と扱われるデータです。
 :::
 
 1. スキーマリポジトリの動作確認  
@@ -376,8 +376,8 @@ Data Id Length は 0x10(16)と扱われるデータです。
 コンテナヘッダは[Container Format で示された仕様](../spec_guide/)と差異があるバージョンで実装している。
 
 - Container Type に仕様上認められてない値が入っている。
-- Data Index フィールドは Data Id Type とリネームされている。
-- Data Id Length フィールドがない。
+- Data Index フィールドは Data ID Type とリネームされている。
+- Data ID Length フィールドがない。
   :::
 
 スキーマリポジトリの確認は以上です。

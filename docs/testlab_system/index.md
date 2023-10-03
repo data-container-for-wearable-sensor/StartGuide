@@ -64,9 +64,9 @@ _表： 差異の一覧_
 
 | 項目     | 仕様                                                      | テストラボシステム実装                                  |
 | -------- | --------------------------------------------------------- | ------------------------------------------------------- |
-| 名称変更 | Data Id Type                                              | Data Index                                              |
-| 仕様変更 | コンテナヘッダ内の Data Id の長さは Data Id Length で示す | Data Id の長さは Data Index の値に対応した値            |
-| 仕様変更 | Data Id Length をヘッダに持つ                             | Data Id Length がヘッダにない                           |
+| 名称変更 | Data ID Type                                              | Data Index                                              |
+| 仕様変更 | コンテナヘッダ内の Data ID の長さは Data ID Length で示す | Data ID の長さは Data Index の値に対応した値            |
+| 仕様変更 | Data ID Length をヘッダに持つ                             | Data ID Length がヘッダにない                           |
 | 仕様違反 | Container Type として決められた値群がある                 | Container Type に認められてない値(`0x0000`)を入れている |
 
 :::
