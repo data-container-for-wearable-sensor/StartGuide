@@ -42,16 +42,15 @@ _図 2-3: コモンパートの構成_
 
 :::note _表 2-1: コモンパート フィールド一覧_
 
-| header field name |                  length | description                                                            |
-| ----------------- | ----------------------: | ---------------------------------------------------------------------- |
-| Container Type    |                  2 byte | コンテナタイプを設定。[詳細は Cointainer Type に記述](#container-type) |
-| Container Length  |                  2 byte | コンテナのヘッダからペイロードすべてを含めたバイト長                   |
-| Data Id Type      |                   1byte | Data ID の種類を設定。[詳細は Data ID Type](#data-id-type)に記述       |
-| Data Id Length    |                   1byte | Data ID のバイト長を設定                                               |
-| Data Id           | {{Data Id length}} byte | ペイロードのデータ構造の識別子                                         |
+| header field name |                  length | description                                                                            |
+| ----------------- | ----------------------: | -------------------------------------------------------------------------------------- |
+| Container Type    |                  2 byte | コンテナタイプを設定。[詳細は Cointainer Type に記述](#container-type)                 |
+| Container Length  |                  2 byte | コンテナのヘッダからペイロードすべてを含めたバイト長                                   |
+| Data Id Type      |                  1 byte | Data ID の種類を設定。[詳細は Data ID Type](#data-id-type)に記述                       |
+| Data Id Length    |                  1 byte | Data ID のバイト長を設定                                                               |
+| Data Id           | {{Data Id length}} byte | ペイロードのデータ構造の識別子。スキーマリポジトリからスキーマ情報を取得する際に利用。 |
 
 :::
-//todo ペイロードのデータ構造の識別子？リポジトリのスキーマ情報の識別子？
 
 #### Container Type
 
@@ -131,8 +130,8 @@ _図 2-4: 拡張パートの構成_
 | ---------------------- | -----: | ------------------------------------------------------ |
 | Extended Header Length | 1 byte | 拡張パート全体のバイト長 (L<sub>Extended Header</sub>) |
 | Attribute Type         | 1 byte | 属性の種類                                             |
-| Attribute Length       | 1 byte | 属性のバイト長（{L<sub>attr</sub>}）                   |
-| Attribute Value        |  Nbyte | 属性データ。                                           |
+| Attribute Length       | 1 byte | 属性のバイト長（L<sub>attr</sub>）                     |
+| Attribute Value        | N byte | 属性データ。                                           |
 
 :::
 
