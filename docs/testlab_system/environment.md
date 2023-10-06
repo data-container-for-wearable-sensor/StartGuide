@@ -2,23 +2,27 @@
 
 ## 動作環境
 
-テストラボシステムは一般的な Windows の動作する PC 上で動作させることができます。
+テストラボシステムは、一般的な Windows PC 上で動作可能です。
+また、Docker が動作する一般的な PC で利用できるように設計されています。
+動作確認は以下の環境で行われています。
 
-docker の動作する一般的な PC であれば動作するように作成しています。
-動作確認は以下の環境で行っています。
-
-- 基盤の実行環境
-  - Windows11 Pro
+- 動作確認環境
+  - OS: Windows11 Pro
+    - CPU: AMD Ryzen 7 PRO 5850U
+    - MEM: 48GB
   - WSL2(Ubuntu 22.04)
-  - Docker
+  - Rancher Desktop(WSL2)
+    - Docker 環境として利用
 - 接続クライアント
-  - Google Chrome
-  - Safari(iPhoneSE2/iOS16)
+  - PC ブラウザ
+    - Google Chrome
+  - スマートフォン
+    - Safari(iPhoneSE2/iOS16)
+- 動作を想定している環境
+  - OS: Docker が動作する OS
+  - MEM: 16GB 程度
 
-動作確認や手順の中で、以下のコマンドを用いるので事前に導入をしてください。
-
-- git
-- docker
+別の動作確認済の環境として、AWS EC2 サービスの c5.xlarge では動作を確認しています。
 
 ## 機能とシステム構成
 
@@ -28,7 +32,7 @@ docker の動作する一般的な PC であれば動作するように作成し
 
 - スマートフォンのジャイロセンサ(加速度、傾き)を入力とします。
 - ジャイロセンサのデータをコンテナによって流通させます。
-- 流通させたコンテナから値を取り出し可視化します。
+- 流通させたコンテナから値を取り出し可視化した出力をします。
 
 ### システム構成
 
@@ -36,16 +40,31 @@ docker の動作する一般的な PC であれば動作するように作成し
 
 ![](environment/overview_on_pc.drawio.png)
 
-_図: システム構成_
+_図 A-1: システム構成_
 
-１つの PC の上でテストラボシステムを動作させます。
+１つのコンピュータの上でテストラボシステムを動作させます。
 テストラボシステム内はメッセージング機能をハブとして、各機能間を接続してシステムを実現しています。
 
-動作している環境にスマートフォンでアクセスする事で、スマートフォンのセンサ情報をシステムに取り込み蓄積し可視化を可能にします。
+データは以下のようにやり取りされていきます。
+
+1. スマートフォンセンサ機能でスマートフォンのセンサ情報をコンテナで取り込みます。
+2. メッセージング機能を介してコンテナ処理機能にコンテナデータを送ります。
+3. コンテナ処理機能はスキーマリポジトリと連携して、コンテナから JSON に変換します。
+4. メッセージング機能を介して可視化機能に JSON を送り可視化します。
 
 ## 起動手順
 
-docker compose でアプリケーションを動かします。
+ここからテストラボシステムを動作させる手順に入ります。
+
+:::info 事前準備
+この先の手順では以下のコマンドを用います。
+事前にインストールしてください。
+
+- git
+- docker
+
+:::
+
 まず、git で必要なファイルを取得(クローン)します。
 この手順で複数のリポジトリを取得します。
 
@@ -53,7 +72,10 @@ docker compose でアプリケーションを動かします。
 ~$ git clone --recursive https://github.com/sensing-iot-standard-consortium-ja/test-lab-system.git
 ```
 
-以下の手順で動作を確認します。
+複数のリポジトリが取得されます。
+
+docker のサブコマンドである、docker compose でアプリケーションを動かします。
+以下の手順を実行します。
 
 ```
 ~$ cd test-lab-system/
@@ -98,8 +120,8 @@ test-lab-system-zookeeper-1 confluentinc/cp-zookeeper:7.1.0 "/etc/confluent/dock
 
 <!-- textlint-enable -->
 
-この時点で複数のアプリケーションが動作しています。
-この後の手順に用いるものや画面を持つものを示します。
+この時点でテストラボシステムを構成する複数のアプリケーションが動作しています。
+この後の手順上重要なものを示します。
 
 - スマートフォンセンサー機能
   - test-lab-system-websensor-1: スマートフォンセンサー機能を提供する Web アプリケーション
@@ -112,10 +134,10 @@ test-lab-system-zookeeper-1 confluentinc/cp-zookeeper:7.1.0 "/etc/confluent/dock
   - test-lab-system-grafana-1: 可視化機能を提供する Web アプリケーション
   - test-lab-system-postgres-1: メッセージング機能から受け取ったデータを格納する DB
 
-container-consumer が再起動を繰り返しますが、
+現時点では container-consumer が再起動を繰り返しますが、
 この後の手順で是正するのでこの時点では許容します。
 
-## 起動確認
+### 起動確認
 
 起動確認のため、ブラウザから Web アプリケーションを開きます。
 正しく動作していると以下の URL から確認できます。
@@ -124,88 +146,128 @@ Google Chrome で以下のページを開いてみてください。
 
 1. スマートフォンセンサー機能：[http://localhost:1188/](http://localhost:1188/)
    ![TestlabSensor](environment/testlab-sensor.png)
+
+   _図 A-2: スマートフォンセンサ機能_
+
 1. スキーマリポジトリ：[http://localhost:30002/](http://localhost:30002/)
    ![IotRegisitory](environment/iot-registory.png)
+
+   _図 A-3: スキーマリポジトリ機能_
+
 1. 可視化機能：[http://localhost:3000/](http://localhost:3000/)
    ![Grafana](environment/grafana.png)
+
+   _図 A-4: 可視化機能_
+
 1. メッセージング機能(管理画面)[http://localhost:8080/](http://localhost:8080/)
    ![ApacheUI for Apache Kafka](environment/ui4apachekafka.png)
+
+   _図 A-5: メッセージング機能(管理画面)_
 
 上記のような画面が出れば、順調に進んでいます。
 
 ## 初期設定手順
 
-ここまででテストラボシステムは起動しています。
-これからは各種設定をします。
+ここまででテストラボシステムは起動していますが、いくつか設定が不足しているので設定をします。
 
 スマートフォンセンサ機能からセンサデータを送信し可視化するまでの手順を示します。
 
-### メッセージング機能とコンテナ処理機能間の設定
+### メッセージング機能へのトピック追加
 
-メッセージング機能とコンテナ処理機能間の設定をします。
+スマートフォンセンサからコンテナ処理機能にデータをやり取りするためのトピックが準備できていないので作成します。
+トピックとはデータのやり取りを行うためのチャンネルのようなものです。
 
-<!-- メッセージングに用いるソフトウェアの Kafka の設定をします。
-Kafka に複数のプロセス間のデータやり取りのハブになります。
-Kafka ではトピックに対し、データを提供する Producer とデータを利用する Consumer が存在します。
-ここでは、準備している Consumer がコンテナを入力として取り扱えるように、トピックを作成します。
-UI for Apache Kafka を用いてトピックの状況を確認します。 -->
+![](environment/overview_target1.drawio.png)
 
-メッセージング機能上に、データのやり取りに用いるトピックを作成します。
+_図 B-1: システム構成(設定箇所)_
 
-#### 変更前の状態確認
+メッセージ基盤は未登録のトピックでデータを投入した場合、自動的にトピックを作成する設定になっています。
+ここでは、スマートフォンセンサ機能からデータを送ることでトピックを追加します。
 
-以下の UI for Apache Kafka の画面より、現在存在するトピックを確認します。
+#### 変更前のトピックの確認
+
+以下の [UI for Apache Kafka](http://localhost:8080/) の画面より、現在存在するトピックを確認します。
 ページを開いた後、 `Show Internal Topics` を無効化すると 4 つのトピックが表示されています。
 
 - [http://localhost:8080/ui/clusters/local/topics](http://localhost:8080/ui/clusters/local/topics)
   ![UI for Apache Kafka1](environment/kafka_ui1.png)
 
-#### 設定変更（トピックの追加)
+_図 B-2:メッセージング(UI for Apache Kafka)機能の画面(変更前)_
 
-未登録のトピックでデータを投入した場合、自動的にトピックを追加する設定になっています。
-今回は、スマートフォンセンサ機能からデータを送ることでトピックを追加します。
+#### トピックの作成（データの送信)
 
-設定が目的なのでスマートフォンセンサ機能ですが PC から開いてください。
+トピックの作成のために、スマートフォンセンサー機能からメッセージング機能にデータを送ります。
+
+スマートフォンセンサ機能ですが PC から開いてください。
 
 1. データ送信のページを開く  
    [http://localhost:1188/ ](http://localhost:1188/)
 2. `値の更新` を押下  
-   加速度、傾きなどに適当な値が入ります
+   加速度、傾きなどに適当な値が入ります。
 3. `単発送信` を押下  
-   サンプルアプリから Kafka にデータが送信されます
+   スマートフォンセンサ機能から、メッセージ基盤へデータが送信されます。
 
 ![サンプルアプリ](environment/send_example_data.png)
-_スマートフォンセンサ機能の画面_
 
-### 設定変更語の設定状態確認
+_図 B-3:スマートフォンセンサ機能の画面_
 
-UI for Apache Kafka を開き画面を更新します。  
+メッセージ基盤へデータを送ることで、メッセージ基盤上に必要な設定が作られます。
+
+#### 設定変更後の設定状態確認
+
+[UI for Apache Kafka](http://localhost:8080/) を開き画面を更新します。  
 `json_mb_ctopic` と `mb_ctopic` の 2 つのトピックが増えていれば期待通りです。
-確認できるまで数分程度かかる可能性があります。
+ただし、確認できるまで数分程度かかる可能性があります。
 
 ![](environment/kafka_ui2.png)
+_図 B-4:メッセージング(UI for Apache Kafka)機能の画面(変更後)_
 
-ここでは `mb_ctopic` というトピックに発行されたコンテナを、
-コンテナ処理基盤(container-consumer)で処理してコンテナを json へ変換して `json_mb_ctopic` に投入している。
+ここでは `mb_ctopic` というトピックに発行されたコンテナをコンテナ処理基盤(container-consumer)で json へ変換し、
+`json_mb_ctopic` というトピックで再度メッセージング基盤に投入しています。
+システム構成からみると図 A-6: のように
 
-また、この手順で container-consumer が再起動しないようになります。
+![](environment/overview_target2.drawio.png)
 
-## メッセージング機能と可視化機能間の設定
+_図 B-5:システム構成と初期設定の対応_
 
-kafka に届いたデータを Avro というデータ形式に変換し、可視化画面用の DB に Sink するための設定をします。
+ここまでで、スマートフォンセンサからコンテナデータを受取り、
+コンテナ処理機能(container-consumer) によってコンテナデータを json へ変換し、メッセージ機能へ投入する設定が完了します。
 
-### データ変換の登録
+### メッセージング機能でのデータ変換
 
-`json_mb_topic` からフォーマットに変換し可視化を行う `Grafana`で用いるデータベースに蓄積をする。
+メッセージング基盤内向けのデータ変換とタイムスタンプの付与の設定を行います。
 
-- 以下のページを開く  
-  [http://localhost:8080/ui/clusters/local/ksqldb/query](http://localhost:8080/ui/clusters/local/ksqldb/query)
+![](environment/overview_target4.drawio.png)
 
-- 画像のようなページが表示される
-  ![](environment/ksql_query_page.png)
+_図 C-1:システム構成(設定箇所)_
 
-- ksql で Stream を作成する（１つ目）  
-  以下の ksql クエリをコピーペーストし、`Execute` を押下
+図 C-1: で示したように、メッセージング基盤内に閉じた内容の設定になります。
+
+#### データ変換の登録
+
+メッセージング基盤上では、トピック(kafka の topic)と Streaming SQL と呼ばれる機能が結合しています。
+これによって、あるトピックに流れてくるデータを SQL におけるテーブル(ストリーム)とみなして、SQL の様に処理ができます。
+
+ここでは、コンテナ処理機能からの、`json_mb_topic` のトピックから取得されるデータに対して、
+
+1. テーブル(ストリーム)を作成する
+2. タイムスタンプ付与し、トピックにする
+
+という処理を実現します。
+
+##### テーブル(ストリーム)を作成
+
+以下の手順に従って、`json_mb_topic` のトピックから、テーブル(ストリーム)を作成します。
+
+1. メッセージ基盤の KSQL の実行ページを開く  
+   [http://localhost:8080/ui/clusters/local/ksqldb/query](http://localhost:8080/ui/clusters/local/ksqldb/query)
+
+   ![](environment/ksql_query_page.png)
+
+   _図 C-2:KSQL の実行ページ_
+
+1. ksql で Stream を作成する  
+   以下の ksql の SQL をコピーペーストし、`Execute` を押下
 
 ```
 CREATE STREAM stream_mb_topic
@@ -224,13 +286,20 @@ CREATE STREAM stream_mb_topic
   );
 ```
 
-- 実行結果の確認（１つ目）
+- 実行結果の確認
 
 画像の下のように `SUCCESS Stream created` と表示される。
+
 ![](environment/ksql_execute.png)
 
-- Stream を作成する（２つ目）
-  同様にもう 1 つクエリを実行する。
+_図 C-2:メッセージング(UI for Apache Kafka)機能の ksql 実行結果の確認_
+
+これで、ストリームが作成できました。
+
+##### タイムスタンプを付与し、トピックにする
+
+ストリームに対して、タイムスタンプを付与して、トピックにするための SQL を実行します。
+前項の画面に引き続き以下の SQL を実行します。
 
 ```
 CREATE STREAM stream_mb_topic_avro
@@ -247,19 +316,25 @@ AS SELECT
 FROM stream_mb_topic as s;
 ```
 
-- 作成した stream を確認する
-  同様に以下のクエリを実行する。
+作成した stream を確認する為に、以下の SQL を実行します。
 
 ```
 show streams;
 ```
 
-![picture 23](environment/show_streams.png)  
-画像の下部のように`STREAM_MB_CTOPIC` と`AVRO_MB_CTOPIC` が表示されれば成功。
+![picture 23](environment/show_streams.png)
+
+_図 A-7:メッセージング(UI for Apache Kafka)機能の ksql 設定画面_
+
+画像の下部のように`STREAM_MB_CTOPIC` と`AVRO_MB_CTOPIC` が表示されれば期待通りです。
 
 ### メッセージング機能から可視化機能へのデータ転送
 
-Kafka の Connector を設定。
+![](environment/overview_target3.drawio.png)
+
+_図 A-8:システム構成における設定箇所_
+
+Kafka の Connector を設定することで、メッセージング機能から可視化機能のデータベースに対してデータを転送します。
 
 - Connector の設定ページを開く  
   [http://localhost:8080/ui/clusters/local/connectors/create-new](http://localhost:8080/ui/clusters/local/connectors/create-new)
@@ -297,10 +372,15 @@ Kafka の Connector を設定。
 
 `avro_mb_jtopic` という Connector が存在すれば OK です。
 
-## 可視化機能の設定
+## 可視化機能の動作確認
 
-データを可視化する画面へアクセスする。
-改めて設定する項目はないが、アプリケーションの動作確認として以下を実施する。
+可視化機能(Grafana)へアクセスし、動作を確認する。
+
+![](environment/overview_target5.drawio.png)
+
+_図 A-9:システム構成との対応_
+
+設定は事前にテストラボシステムの中で設定しているため、改めて設定する項目はないが、アプリケーションの動作確認として以下を実施する。
 
 1. Grafana へアクセス  
    以下の情報で Grafana へアクセスしログインする  
@@ -328,6 +408,8 @@ Kafka の Connector を設定。
    画面は 5 秒に 1 回の更新がされるのでデータ送信後 5 秒以内に表示される。  
    (画面右上から 1s に変更可)
    ![picture 24](environment/grafana_graph.png)
+
+_図 A-10:可視化機能 ExampleDashboard_
 
 ## コンテナ処理機能の設定
 
