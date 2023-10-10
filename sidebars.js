@@ -68,11 +68,6 @@ const sidebars = {
           label: '動作手順',
           id: 'firststep/index',
         },
-        {
-          type: 'doc',
-          label: 'バージョン情報',
-          id: 'testlab_system/versioning',
-        },
       ]
     },
     {
@@ -89,6 +84,11 @@ const sidebars = {
           type: 'doc',
           label: 'ソースコード',
           id: 'etc/sourcecode',
+        },
+        {
+          type: 'doc',
+          label: 'バージョン情報',
+          id: 'testlab_system/versioning',
         },
         {
           type: 'doc',

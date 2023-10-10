@@ -175,7 +175,7 @@ Google Chrome で以下のページを開いてみてください。
 ### メッセージング機能へのトピック追加
 
 スマートフォンセンサからコンテナ処理機能にデータをやり取りするためのトピックが準備できていないので作成します。
-トピックとはデータのやり取りを行うためのチャンネルのようなものです。
+トピックとはデータのやり取りを行うためのチャンネルです。
 
 ![](environment/overview_target1.drawio.png)
 
@@ -324,23 +324,25 @@ show streams;
 
 ![picture 23](environment/show_streams.png)
 
-_図 A-7:メッセージング(UI for Apache Kafka)機能の ksql 設定画面_
+_図 C-3:メッセージング(UI for Apache Kafka)機能の ksql 設定画面_
 
 画像の下部のように`STREAM_MB_CTOPIC` と`AVRO_MB_CTOPIC` が表示されれば期待通りです。
 
 ### メッセージング機能から可視化機能へのデータ転送
 
+ここまでの設定で、メッセージング機能から可視化機能へデータを転送する前の、タイムスタンプの付与等のデータ変換を行う設定が完了しました。
+次に、データを可視化基盤に転送する設定を行います。
+
 ![](environment/overview_target3.drawio.png)
 
-_図 A-8:システム構成における設定箇所_
+_図 D-1:システム構成における設定箇所_
 
-Kafka の Connector を設定することで、メッセージング機能から可視化機能のデータベースに対してデータを転送します。
+UI for Apache Kafka で Connector を設定することで、メッセージング機能から可視化機能のデータを転送します。
 
 - Connector の設定ページを開く  
   [http://localhost:8080/ui/clusters/local/connectors/create-new](http://localhost:8080/ui/clusters/local/connectors/create-new)
 - Connector の設定を入力する  
-  Name: `avro_mb_jtopic`  
-  Config \*
+  Name: `avro_mb_jtopic`
 
 ```
 {
@@ -363,10 +365,16 @@ Kafka の Connector を設定することで、メッセージング機能から
 }
 ```
 
-- Connector の設定を登録する  
-  `Submit` を押して登録するが **正常登録時に画面が何も変わらない**
+![New Connector](environment/new_connector.png)
+_図 D-2:UI for Apache Kafka 上での入力例_
 
-- Connector の設定登録を確認する  
+- Connector の設定を登録する  
+  `Submit` を押して登録する。
+  UI for Apache Kafka の表示上の不具合で **正常登録時に画面が何も変わらない。**
+
+  2 回押すと、同名の Connector が存在するというエラーが表示されるので、これをもって登録確認としてよい。
+
+- Connector の登録を確認する  
   以下のページを開く。  
   [http://localhost:8080/ui/clusters/local/connectors](http://localhost:8080/ui/clusters/local/connectors)
 
@@ -374,13 +382,20 @@ Kafka の Connector を設定することで、メッセージング機能から
 
 ## 可視化機能の動作確認
 
-可視化機能(Grafana)へアクセスし、動作を確認する。
+可視化機能へアクセスし、動作を確認します。
+Grafana という可視化ツールを利用しています。
+
+Grafana のダッシュボードやクエリの設定は、テストラボシステムの中で事前に設定しています。
+
+事前に設定されているダッシュボードの設定は以下に存在します。
+
+[test-lab-system / grafana](https://github.com/sensing-iot-standard-consortium-ja/test-lab-system/tree/main/grafana)
 
 ![](environment/overview_target5.drawio.png)
 
-_図 A-9:システム構成との対応_
+_図 E-1:システム構成における設定箇所_
 
-設定は事前にテストラボシステムの中で設定しているため、改めて設定する項目はないが、アプリケーションの動作確認として以下を実施する。
+改めて設定する項目がないので、アプリケーションの動作確認を実施する。
 
 1. Grafana へアクセス  
    以下の情報で Grafana へアクセスしログインする  
@@ -401,86 +416,107 @@ _図 A-9:システム構成との対応_
    1. `値の更新` を押下  
       加速度、傾きなどに適当な値が入る
    1. `単発送信` を押下  
-      サンプルアプリから Kafka に１つデータを送信
+      サンプルアプリからメッセージング機能を通じ、適当な値が入ったデータを１つ送信
 
 1. データの疎通の確認  
-   Grafana 上で画面が可視化される。  
-   画面は 5 秒に 1 回の更新がされるのでデータ送信後 5 秒以内に表示される。  
-   (画面右上から 1s に変更可)
+   送信した１つのデータを確認します。
+   データ送信後 5 秒以内に画面が更新され表示されます。  
    ![picture 24](environment/grafana_graph.png)
 
-_図 A-10:可視化機能 ExampleDashboard_
+   _図 E-2:可視化機能 ExampleDashboard_
+
+データの疎通を確認できれば、可視化機能の動作確認は完了です。
 
 ## コンテナ処理機能の設定
 
 ### スキーマリポジトリの動作確認
 
+最期にスキーマリポジトリの動作確認を行います。
+
+![](environment/overview_target6.drawio.png)
+
+_図 F-1:システム構成における設定箇所_
+
 スキーマリポジトリには、
-デフォルトでいくつかのスキーマが定義されているため、改めて設定する必要がある項目はない。  
-しかし、アプリケーションの動作確認として以下を実施する。
+デフォルトでいくつかのスキーマが定義されているため、改めて設定する必要がある項目はないです。
 
-1. サンプルデータの取得  
-   サンプルアプリから送信されるデータのスキーマ情報をまず定義します。
-   以下のバイナリデータはコンテナ化されたタイムスタンプ付きの６軸のデータです。  
+事前に設定されているスキーマの設定は以下に存在します。
+
+[container-repository / registry / repo](https://github.com/sensing-iot-standard-consortium-ja/container-repository/tree/29d6d9107245baa390bd30192c5952daba168752/registry/repo)
+
+上記リンクの`0_00112233445566778899aabbccddeeff.json` というファイルが、スマートフォンが送信するコンテナデータのスキーマ定義になります。
+
+アプリケーションの動作確認として以下を実施します。
+
+1. コンテナサンプルのダウンロード  
+   スマートフォンセンサ機能から送信されるデータのスキーマ情報をまず定義します。
+   以下から取得できる `mobile_acce.cntr` はコンテナデータです。  
    [Download(ExampleContainer)](environment/mobile_acce.cntr)  
-   このファイルをサンプルコンテナと呼ぶ。
-
-:::caution
-サンプルコンテナは、[Container Format で示された仕様](../spec_guide/)と差異があります。  
-Data ID Length フィールドがないです。
-Data ID Length は 0x10(16)と扱われるデータです。
-:::
+   このファイルをコンテナサンプルと呼びます。
 
 1. スキーマリポジトリの動作確認  
-   スキーマリポジトリの確認します。  
-   [http://localhost:30002/](http://localhost:30002/) にアクセス
+   スキーマリポジトリの動作を確認します。  
+   [http://localhost:30002/](http://localhost:30002/) にアクセスします。
+   以下のような画面が表示されます。
 
-2. スキーマリポジトリのスキーマ確認  
+   ![LoadFileButton](environment/iot-repository-loaddata.png)
+   _図 F-2:スキーマリポジトリの画面表示_
+
+1. スキーマリポジトリでのスキーマ確認  
    テストラボで準備しているスキーマリポジトリには以下の機能があります。
 
-   - コンテナからのスキーマ定義
-   - コンテナへスキーマを適用した状態のプレビュー
+   - コンテナデータからのスキーマ定義
+   - コンテナデータへスキーマを適用するプレビュー
 
-3. コンテナデータの読み込み  
+1. コンテナデータの読み込み  
    初期起動時には画面の右上の[Load File]ボタンを押下しダウンロードしたファイルを読み込みます。  
-   ![LoadFileButton](environment/iot-repository-loaddata.png)
+   ![LoadFileButton](environment/iot-repository-loaddata2.png)
+   _図 F-3: コンテナデータの読み込み_
 
-前述のサンプルコンテナを読み込むと、以下のようにプレビューされます。
+1. 読み込み結果のプレビュー
 
-![ExampleSchema](environment/iot-repository-example.png)
+   ![ExampleSchema](environment/iot-repository-example.png)
+   _図 F-4:スキーマリポジトリでのコンテナ読み込み時の画面表示_
 
-サンプルコンテナに対応するスキーマファイルは、リポジトリに内蔵されているため、対応するコンテナを読み込むことでスキーマファイルが読み込まれます。
-`dt, x, y, z, alpha, beta, gamma` の７つのフィールドが定義され、サンプルコンテナに適用された結果が `Data` や `Raw` で確認できます。
+   サンプルコンテナに対応するスキーマファイルは、リポジトリ内で事前に定義されているため、対応するサンプルコンテナを読み込むことで、スキーマリポジトリの動作確認ができます。
+   `dt, x, y, z, alpha, beta, gamma` の７つのフィールドが定義され、サンプルコンテナに適用された結果が `Data` や `Raw` で確認できます。
+   [コンテナデータの利用方法ページで紹介した内容](/docs/spec_guide/example#コンテナデータの利用方法)と対応しています。
 
-下にスクロールすると、サンプルコンテナのヘッダ情報も確認できます。
-
-:::caution
-コンテナヘッダは[Container Format で示された仕様](../spec_guide/)と差異があるバージョンで実装している。
-
-- Container Type に仕様上認められてない値が入っている。
-- Data Index フィールドは Data ID Type とリネームされている。
-- Data ID Length フィールドがない。
-  :::
+   :::caution
+   サンプルコンテナは、[Container Format で示された仕様](../spec_guide/)と少し異なります。  
+   テストラボシステムの実装には、[利用上の注意](../testlab_system#利用上の注意) に示した差異があります。
+   :::
 
 スキーマリポジトリの確認は以上です。
 
-## スマートフォンセンサ機能の設定
+## スマートフォンセンサの有効化設定
 
 スマートフォンからジャイロ(傾き)と加速度のセンサーデータを送るための設定をします。
 
-ここまで作った環境にスマートフォンから https でアクセスする必要があるため、外部の Web サービスを利用します。
+![ngrok](environment/overview_target7.drawio.png)
+
+_図 G-1:システム構成における設定箇所_
+
+スマートフォンセンサー機能はブラウザでアクセスする機能です。
+https でアクセスすることでセンサーのデータを送信できるようになります。
 
 <!-- textlint-disable -->
 
 :::note
-ブラウザのセキュリティ機能が要求する事項に対応するための対応です。
+ブラウザのセキュリティ機能によって、
+非 https 環境で接続した場合、ジャイロセンサへのアクセスがブロックされます。
 :::
+
+また、スマートフォンがない場合、Google Chrome のもつジャイロセンサをエミュレーションする機能を用いて、可視化機能を試すことができます。以下の Google Chrome の開発者ツールの使い方のガイドを参考にしてください。
+
+https://developer.chrome.com/docs/devtools/sensors/#orientation
 
 <!-- textlint-enable -->
 
-### ngrok による https アクセス
+### ngrok によるセンサーデータの取得
 
-ngrok を利用することで、ローカルで動作しているセンサーデータを送信するための Web アプリケーションをインターネット経由でアクセスできるようにすることで、スマートフォンからセンサーデータを送信できるようにします。
+ngrok は、ローカルネットワークのサーバを公開し外部からアクセス可能にする SaaS のサービスです。
+これを利用することで、スマートフォンセンサーの情報を利用できるようにします。
 
 - ngrok の Free プランのアカウント登録  
   [https://ngrok.com/](https://ngrok.com/) で登録します。
@@ -497,25 +533,51 @@ ngrok を利用することで、ローカルで動作しているセンサー�
   ```
 
   環境変数 NGROK_AUTHTOKEN に AuthTokens を書き込む。`compose-dev.yaml` からこの環境変数を利用して ngrok を利用できる。
+  環境変数の値を利用して ngrok を実行するための設定は、[compose-dev.yaml](https://github.com/sensing-iot-standard-consortium-ja/test-lab-system/blob/main/compose-dev.yaml)に存在する。
 
 - docker compose で ngrok を実行する  
   `docker compose -f compose-dev.yaml run ngrok` を実行する。  
   実行すると以下のような画面が表示される。
-  ![ngrok](environment/ngrok.png)  
-  `Forwarding` に表示される URL をスマートフォンで表示する。
+  ![ngrok](environment/ngrok.png)
+
+  _図 G-2:ngrok の動作時の画面_
+
+  `Forwarding` に表示される ngrok のサービスの URL をスマートフォンで開くことで、センサーデータを送る準備ができます。
 
 ### センサーデータの送信
 
-画面下部のモーションの許可を押下するとセンサーデータ取得のダイアログが表示されます。
-許可をするとセンサーデータが取得できるようになります。
+スマートフォンセンサ機能について、センサーデータを**連続的に**送信するための設定を行います。
 
-センサーデータが取得できるようになった後は
+![ngrok](environment/overview_target8.drawio.png)
+
+_図 G-3:システム構成における設定箇所_
+
+ここでは、センサーデータへブラウザからアクセスできるものとして手順を進めます。
+
+まず、サービスの URL をスマートフォンで開くことで以下の画面が表示されます。
+[直前の手順(ngrok によるセンサーデータの取得)で取得した Forwarding の URL](./environment#ngrok-によるセンサーデータの取得)を、開いてください。
+
+![](./environment/toppage.png)
+
+_図 G-4:スマートフォンセンサ機能の画面_
+
+開いた画面下部の **モーションの許可** ボタンを押下すると、次の図で示した、"動作と方向"へのアクセスを求めている旨のダイアログが表示されます。
+
+![](./environment/allow_dialog.png)
+
+_図 G-5:スマートフォンセンサ機能の画面_
+
+ダイアログで許可をすると、画面上の加速度や傾きがセンサーから取得されるデータになります。
+
+センサーデータが取得できるようになった後は、以下の設定を行います。
 
 - 送信間隔をデフォルト値の `1000 msec` から `50 msec` に変更
 - 送信するデータをデフォルト値 `container` であることを確認
 - `定期送信` にチェックを入れる
 
-これによってセンサデータを連続で送信できるようになる。
+これによって、`50msec`に１回の頻度でセンサデータをコンテナフォーマットを用いて連続的に送信されるようになります。
+送信されたデータは[可視化機能の動作確認](/environment#可視化機能の動作確認)の項で示した手順で確認できます。
 
-[Grafana http://localhost:3000/](http://localhost:3000/) に設定してあるダッシュボードから確認できる。  
-描画データの更新間隔を画面右上で設定できるので 5s(5 秒)を 1s(1 秒)にするとよりスムースに表示が可能。
+描画データの更新間隔を画面右上で設定できるので 更新感覚を 1s(1 秒)にするとよりスムースに表示できます。
+
+ここまでで動作に必要な設定や、確認手順を完了しました。
