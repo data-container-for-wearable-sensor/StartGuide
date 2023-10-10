@@ -6,7 +6,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Start Guide of Container Format',
+  title: 'コンテナフォーマットスタートガイド',
   tagline: `コンテナフォーマットを理解し活用するための初心者向けのガイドです。`,
   favicon: 'img/favicon.ico',
 
@@ -72,7 +72,7 @@ const config = {
           {
             to: '/docs/intro',
             position: 'left',
-            label: 'Start Guide of Container Format',
+            label: 'コンテナフォーマットスタートガイド',
           },
           {
             href: 'https://github.com/sensing-iot-standard-consortium-ja',
