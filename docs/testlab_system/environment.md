@@ -168,7 +168,7 @@ Google Chrome で以下のページを開いてみてください。
 
 ## 初期設定手順
 
-ここまででテストラボシステムは起動していますが、いくつか設定が不足しているので設定をします。
+ここまででテストラボシステムは起動していますが、全体を動作させるためにはいくつか設定が不足しているので設定をします。
 
 スマートフォンセンサ機能からセンサデータを送信し可視化するまでの手順を示します。
 
@@ -198,7 +198,7 @@ _図 B-2:メッセージング(UI for Apache Kafka)機能の画面(変更前)_
 
 トピックの作成のために、スマートフォンセンサー機能からメッセージング機能にデータを送ります。
 
-スマートフォンセンサ機能ですが PC から開いてください。
+データを送るために、PC から開いてください。
 
 1. データ送信のページを開く  
    [http://localhost:1188/ ](http://localhost:1188/)
@@ -337,11 +337,17 @@ _図 C-3:メッセージング(UI for Apache Kafka)機能の ksql 設定画面_
 
 _図 D-1:システム構成における設定箇所_
 
-UI for Apache Kafka で Connector を設定することで、メッセージング機能から可視化機能のデータを転送します。
+UI for Apache Kafka で Connector を設定することで、メッセージング機能から可視化機能へデータを転送します。
 
-- Connector の設定ページを開く  
+- Kafka Connect > new Connector の設定ページを開く  
+  以下の URL を開きます。
+
   [http://localhost:8080/ui/clusters/local/connectors/create-new](http://localhost:8080/ui/clusters/local/connectors/create-new)
-- Connector の設定を入力する  
+
+- Connector の設定を入力します
+
+  開いた画面に、以下の内容を入力します。
+
   Name: `avro_mb_jtopic`
 
 ```
@@ -366,13 +372,16 @@ UI for Apache Kafka で Connector を設定することで、メッセージン�
 ```
 
 ![New Connector](environment/new_connector.png)
-_図 D-2:UI for Apache Kafka 上での入力例_
+_図 D-2:UI for Apache Kafka 上での設定_
 
 - Connector の設定を登録する  
   `Submit` を押して登録する。
-  UI for Apache Kafka の表示上の不具合で **正常登録時に画面が何も変わらない。**
+  UI for Apache Kafka の表示上の不具合で **正常登録時に画面に何も起こりません** が、
 
-  2 回押すと、同名の Connector が存在するというエラーが表示されるので、これをもって登録確認としてよい。
+  2 回押すと、同名の Connector が存在するというエラーが画面右下へ表示されるので、これをもって登録確認としてください。
+  ![already_exist](environment/already_exist.png)
+
+  _図 D-3: 既に同名の Connector が存在するエラー表示_
 
 - Connector の登録を確認する  
   以下のページを開く。  
@@ -383,9 +392,9 @@ _図 D-2:UI for Apache Kafka 上での入力例_
 ## 可視化機能の動作確認
 
 可視化機能へアクセスし、動作を確認します。
-Grafana という可視化ツールを利用しています。
+可視化機能は Grafana という可視化ツールとデータを蓄積する postgres という RDB を利用しています。
 
-Grafana のダッシュボードやクエリの設定は、テストラボシステムの中で事前に設定しています。
+Grafana のダッシュボードやクエリの設定は、テストラボシステムで事前に設定しています。
 
 事前に設定されているダッシュボードの設定は以下に存在します。
 
@@ -411,7 +420,7 @@ _図 E-1:システム構成における設定箇所_
 
 1. テストデータ送信の確認
 
-   1. データ送信のページを開く  
+   1. PC でスマートフォンセンサー機能のページを開く  
       [http://localhost:1188/ ](http://localhost:1188/)
    1. `値の更新` を押下  
       加速度、傾きなどに適当な値が入る
@@ -483,7 +492,7 @@ _図 F-1:システム構成における設定箇所_
    [コンテナデータの利用方法ページで紹介した内容](/docs/spec_guide/example#コンテナデータの利用方法)と対応しています。
 
    :::caution
-   サンプルコンテナは、[Container Format で示された仕様](../spec_guide/)と少し異なります。  
+   サンプルコンテナは、[Container Format で示された仕様](../spec_guide/)と異なります。  
    テストラボシステムの実装には、[利用上の注意](../testlab_system#利用上の注意) に示した差異があります。
    :::
 
@@ -498,7 +507,7 @@ _図 F-1:システム構成における設定箇所_
 _図 G-1:システム構成における設定箇所_
 
 スマートフォンセンサー機能はブラウザでアクセスする機能です。
-https でアクセスすることでセンサーのデータを送信できるようになります。
+スマートフォンのブラウザから https でアクセスすることでセンサーのデータを送信できるようになります。
 
 <!-- textlint-disable -->
 
