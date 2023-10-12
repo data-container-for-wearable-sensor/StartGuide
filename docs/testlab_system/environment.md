@@ -3,7 +3,7 @@
 ## 動作環境
 
 テストラボシステムは、一般的な Windows PC 上で動作可能です。
-また、Docker が動作する一般的な PC で利用できるように設計されています。
+また、Docker が動作する一般的な PC 向けに設計されています。
 動作確認は以下の環境で行われています。
 
 - 動作確認環境
@@ -22,7 +22,7 @@
   - OS: Docker が動作する OS
   - MEM: 16GB 程度
 
-別の動作確認済の環境として、AWS EC2 サービスの c5.xlarge では動作を確認しています。
+別の動作確認済の環境として、AWS EC2 サービスの c5.xlarge でも動作を確認しています。
 
 ## 機能とシステム構成
 
@@ -88,7 +88,7 @@ docker のサブコマンドである、docker compose でアプリケーショ�
 ~/testlab-tutorial$ docker compose ps -a
 ```
 
-で `container-consumer` 以外が `Up` のステータスになっていれば OK です。
+で `container-consumer` 以外が `Up` のステータスになっていれば期待通りです。
 
 <!-- textlint-disable -->
 
@@ -126,8 +126,8 @@ test-lab-system-zookeeper-1 confluentinc/cp-zookeeper:7.1.0 "/etc/confluent/dock
 - スマートフォンセンサ機能
   - test-lab-system-websensor-1: スマートフォンセンサ機能を提供する Web アプリケーション
 - コンテナ処理機能
-  - test-lab-system-container-consumer-1: コンテナ処理機能。メッセージング機能よりコンテナデータを受取り、スキーマリポジトリを参照して、変換しメッセージング機能に戻す
-  - test-lab-system-schema-repository-1: スキーマリポジトリ。リクエストに従ってスキーマ情報を応答する
+  - test-lab-system-container-consumer-1: コンテナデータに対して、スキーマリポジトリを参照しながらデータ変換するコンテナ処理機能
+  - test-lab-system-schema-repository-1: リクエストに従ってスキーマ情報を応答するスキーマリポジトリ機能
 - メッセージング機能
   - test-lab-system-kafka-ui-1: kafka の管理用の GUI(ksql や JDBC Sink の設定はこの画面を経由して行う)
 - 可視化機能
@@ -175,7 +175,8 @@ Google Chrome で以下のページを開いてみてください。
 ### メッセージング機能へのトピック追加
 
 スマートフォンセンサからコンテナ処理機能にデータをやり取りするためのトピックが準備できていないので作成します。
-トピックとはデータのやり取りを行うためのチャンネルです。
+
+トピックとはデータ送受信のチャンネルです。トピックに発行(publish)されたメッセージを、トピックを購読(subscribe)することで受信できます。
 
 ![](environment/overview_target1.drawio.png)
 
@@ -224,7 +225,7 @@ _図 B-4:メッセージング(UI for Apache Kafka)機能の画面(変更後)_
 
 ここでは `mb_ctopic` というトピックに発行されたコンテナをコンテナ処理基盤(container-consumer)で json へ変換し、
 `json_mb_ctopic` というトピックで再度メッセージング基盤に投入しています。
-システム構成からみると図 A-6: のように
+システム構成からみると図 B-5: のような設定になります。
 
 ![](environment/overview_target2.drawio.png)
 
@@ -235,7 +236,7 @@ _図 B-5:システム構成と初期設定の対応_
 
 ### メッセージング機能でのデータ変換
 
-メッセージング基盤内向けのデータ変換とタイムスタンプの付与の設定を行います。
+メッセージング基盤内向けのデータ変換とタイムスタンプの付与の設定をします。
 
 ![](environment/overview_target4.drawio.png)
 
@@ -248,12 +249,10 @@ _図 C-1:システム構成(設定箇所)_
 メッセージング基盤上では、トピック(kafka の topic)と Streaming SQL と呼ばれる機能が結合しています。
 これによって、あるトピックに流れてくるデータを SQL におけるテーブル(ストリーム)とみなして、SQL の様に処理ができます。
 
-ここでは、コンテナ処理機能からの、`json_mb_topic` のトピックから取得されるデータに対して、
+ここでは、`json_mb_topic` のトピックから取得されるデータに対し以下の処理を実現します。
 
 1. テーブル(ストリーム)を作成する
 2. タイムスタンプ付与し、トピックにする
-
-という処理を実現します。
 
 ##### テーブル(ストリーム)を作成
 
@@ -330,8 +329,8 @@ _図 C-3:メッセージング(UI for Apache Kafka)機能の ksql 設定画面_
 
 ### メッセージング機能から可視化機能へのデータ転送
 
-ここまでの設定で、メッセージング機能から可視化機能へデータを転送する前の、タイムスタンプの付与等のデータ変換を行う設定が完了しました。
-次に、データを可視化基盤に転送する設定を行います。
+ここまでの設定で、メッセージング機能から可視化機能へデータを転送する前の、タイムスタンプの付与等のデータ変換する設定が完了しました。
+次に、データを可視化基盤に転送する設定をします。
 
 ![](environment/overview_target3.drawio.png)
 
@@ -387,7 +386,7 @@ _図 D-2:UI for Apache Kafka 上での設定_
   以下のページを開く。  
   [http://localhost:8080/ui/clusters/local/connectors](http://localhost:8080/ui/clusters/local/connectors)
 
-`avro_mb_jtopic` という Connector が存在すれば OK です。
+`avro_mb_jtopic` という Connector が存在すれば正しく設定できています。
 
 ## 可視化機能の動作確認
 
@@ -541,12 +540,14 @@ ngrok は、ローカルネットワークのサーバを公開し外部から�
   export NGROK_AUTHTOKEN={発行したAuthToken}
   ```
 
-  環境変数 NGROK_AUTHTOKEN に AuthTokens を書き込む。`compose-dev.yaml` からこの環境変数を利用して ngrok を利用できる。
-  環境変数の値を利用して ngrok を実行するための設定は、[compose-dev.yaml](https://github.com/sensing-iot-standard-consortium-ja/test-lab-system/blob/main/compose-dev.yaml)に存在する。
+  環境変数 NGROK_AUTHTOKEN に AuthTokens を書き込み、`compose-dev.yaml` からこの環境変数を利用して ngrok を起動します。
+  環境変数の値を利用して ngrok を実行するための設定は、[compose-dev.yaml](https://github.com/sensing-iot-standard-consortium-ja/test-lab-system/blob/main/compose-dev.yaml)に書かれています。
 
-- docker compose で ngrok を実行する  
-  `docker compose -f compose-dev.yaml run ngrok` を実行する。  
-  実行すると以下のような画面が表示される。
+- docker compose で ngrok を実行します。
+  具体的には、以下のコマンドを実行します。
+
+  `docker compose -f compose-dev.yaml run ngrok`  
+  すると以下のような画面が表示される。
   ![ngrok](environment/ngrok.png)
 
   _図 G-2:ngrok の動作時の画面_
@@ -555,7 +556,7 @@ ngrok は、ローカルネットワークのサーバを公開し外部から�
 
 ### センサデータの送信
 
-スマートフォンセンサ機能について、センサデータを**連続的に**送信するための設定を行います。
+スマートフォンセンサ機能について、センサデータを**連続的に**送信するための設定をします。
 
 ![ngrok](environment/overview_target8.drawio.png)
 
@@ -570,7 +571,7 @@ _図 G-3:システム構成における設定箇所_
 
 _図 G-4:スマートフォンセンサ機能の画面_
 
-開いた画面下部の **モーションの許可** ボタンを押下すると、次の図で示した、"動作と方向"へのアクセスを求めている旨のダイアログが表示されます。
+開いた画面下部の **モーションの許可** ボタンを押下すると、次の図で示したように、"動作と方向"へのアクセスを許可するかどうかを求めているダイアログが表示されます。
 
 ![](./environment/allow_dialog.png)
 
