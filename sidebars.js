@@ -50,7 +50,7 @@ const sidebars = {
       items: [
         {
           type: 'doc',
-          label: '概要・目的',
+          label: '目的・概要',
           id: 'testlab_system/index',
         },
         {
