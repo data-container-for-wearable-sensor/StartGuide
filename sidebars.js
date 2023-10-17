@@ -55,7 +55,7 @@ const sidebars = {
         },
         {
           type: 'doc',
-          label: '構成',
+          label: 'システムの構成',
           id: 'testlab_system/test_lab',
         },
         {

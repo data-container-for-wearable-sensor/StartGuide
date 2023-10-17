@@ -4,12 +4,12 @@
 
 https://github.com/sensing-iot-standard-consortium-ja
 
-## スキーマリポジトリ
+## スキーマリポジトリ機能
 
 container-repository
 https://github.com/sensing-iot-standard-consortium-ja/container-repository
 
-## スマートフォンセンサ機能
+## センサーデータ取得及びコンテナ化機能
 
 container-websensor
 https://github.com/sensing-iot-standard-consortium-ja/container-websensor
