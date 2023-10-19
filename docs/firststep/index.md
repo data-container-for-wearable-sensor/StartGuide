@@ -45,8 +45,9 @@ _図 3: スマートフォンセンサからのデータ送信_
 
 _図 4: スマートフォンのモーション許可ダイアログ (iOS の場合)_
 
-`"動作と方向"へのアクセス` を許可することで、
-ジャイロセンサの情報が画面へ反映されるようになり、画面上の加速度/傾きの値が目まぐるしく変化するようになります。
+`"動作と方向"へのアクセス` を許可します。
+これによって、ジャイロセンサの情報が画面へ反映されるようになり、
+画面上の加速度/傾きの値が変化するようになります。
 
 この値をコンテナデータの作成に利用します。
 
@@ -68,7 +69,7 @@ _図 5: センサーデータ取得及びコンテナ化機能の設定_
 1. 送信するデータを `container` とする(デフォルト値)
 1. `定期送信` にチェックを入れる
 
-これによって、センサデータを`50msec`に１回の頻度でコンテナフォーマットを用いて連続的に送信されるようになります。
+これによって、センサデータを`50msec`に１回の頻度でコンテナフォーマットを用いて繰り返し送信するようになります。
 
 ### 可視化機能によるセンサデータの確認
 
@@ -89,7 +90,7 @@ _図 6: 可視化されたセンサデータのグラフ_
 
 ### コンテナデータの作り方
 
-スマートフォンによるセンサ機能では、以下のようにコンテナデータを作成しています。
+センサーデータ取得及びコンテナ化機能では、以下の実装でにコンテナデータを作成しています。
 JavaScript によるコンテナデータを作る実装です。
 
 ```
@@ -122,15 +123,69 @@ JavaScript によるコンテナデータを作る実装です。
 
 :::
 
-この抜粋で示すことは、
+この抜粋でのポイントは、
 [コンテナフォーマット 使用例 コンテナデータ作成の具体例](spec_guide/example#コンテナデータ作成の具体例)で記述したように、
 **最も基本的な形のコンテナは決まったヘッダをペイロードに付けること**で、コンテナデータになることです。
 
 ### コンテナヘッダの扱い方
 
-コンテナ処理機能では、外部から受け取ったコンテナデータを処理するために、以下のようにコンテナデータからヘッダの情報を取り出す。
-以下の抜粋はコンテナデータを受取って、ヘッダの各フィールドとペイロードを取り出す処理です。
-Python3 による実装です。
+コンテナ処理機能では、外部から受け取ったコンテナデータを処理するために、コンテナデータからヘッダの情報を取り出します。
+以下のソース抜粋はコンテナデータを受取って、ヘッダの各フィールドとペイロードを取り出す処理です。
+重要なポイントは、コンテナデータに対してヘッダの順序や位置、データ幅を利用してヘッダの情報を抽出する、ということです。
+
+図にすると以下の処理の実装例になります。
+
+![](compute_container.drawio.png)
+
+_図 7: コンテナデータの処理イメージ_
+
+Go による実装とPython3 による実装の２例あります。
+
+```
+type Header struct {
+	Type          uint16          `json:"Type"`
+	Length        uint16          `json:"Length"`
+	DataIndex     uint8           `json:"DataIndex"`
+	DataId        []byte          `json:"-"`
+	OptionalField []OptionalField `json:"OptionalField"`
+}
+...略...
+func Marshal(byteArray []byte) *Container {
+	c := New()
+	buf := bytes.NewReader(byteArray)
+
+	// ContainerType
+	if err := binary.Read(buf, binary.BigEndian, &c.Header.Type); err != nil {
+		fmt.Println("binary.Read failed:", err)
+	}
+	if err := binary.Read(buf, binary.BigEndian, &c.Header.Length); err != nil {
+		fmt.Println("binary.Read failed:", err)
+	}
+	if err := binary.Read(buf, binary.BigEndian, &c.Header.DataIndex); err != nil {
+		fmt.Println("binary.Read failed:", err)
+	}
+	dataIndexLength := Common.GetDataIndexLength(c.Header.DataIndex)
+	c.Header.DataId = make([]byte, dataIndexLength)
+	if err := binary.Read(buf, binary.BigEndian, &c.Header.DataId); err != nil {
+		fmt.Println("binary.Read failed:", err)
+	}
+
+	payloadSize := int(c.Header.Length) -
+		(int(reflect.TypeOf(c.Header.Type).Size()) +
+			int(reflect.TypeOf(c.Header.Length).Size()) +
+			int(reflect.TypeOf(c.Header.DataIndex).Size()) +
+			dataIndexLength)
+	c.Payload = make([]byte, payloadSize)
+	if err := binary.Read(buf, binary.BigEndian, c.Payload); err != nil {
+		fmt.Println("binary.Read failed:", err)
+	}
+
+	return c
+}
+```
+ソースコード抜粋元 [container-consumer](https://github.com/sensing-iot-standard-consortium-ja/container-consumer/blob/60bb42fd4ad09915cc5c933c056428c3c6ef4dd4/Container/Container.go#L72-L104)
+
+以下は、Python3 による実装です。
 
 ```
 def parse(data: bytes):
@@ -155,12 +210,9 @@ def parse(data: bytes):
 
 ソースコード抜粋元 [container-python-consumer](https://github.com/sensing-iot-standard-consortium-ja/container-python-consumer/blob/030aa1d36d0e98873ca93533f892a66c81c63e5c/main.py#L40-L60)
 
-この抜粋で示すことは、 [コンテナフォーマット 使用例 ヘッダとペイロードの分割](spec_guide/example#ヘッダとペイロードの分割)で記述した内容が実現されていることです。
-コンテナヘッダの仕様に基づいて、決まったバイト位置から決まった幅のバイト列を取り出す方法で、
-コンテナヘッダのフィールドやコンテナのペイロードを取り出す実装の 1 つを示しています。
+このような手続きによって、コンテナデータをヘッダのフィールド群やペイロードとして取り出しています。
 
-ここでは手続きによってコンテナデータをヘッダのフィールド群やペイロードとして取り出したが、
-例えば C 言語であれば構造体へのキャストでも同様の処理が実現可能です。
+他の言語であれば構造体へのキャストのような形でも実現可能でしょう。
 
 <!-- textlint-disable -->
 
@@ -168,7 +220,7 @@ def parse(data: bytes):
 ここで作られているコンテナは[Container Format で示された仕様](spec_guide)と差異があります。
 
 コンテナヘッダ内の Data ID の長さは Data ID Length で示す仕様です。
-しかし、Data ID の長さは Data Index の値に対応した値になるよう取り扱っている。
+しかし、Data ID の長さは Data Index の値に対応した値になるよう取り扱っています。
 :::
 
 <!-- textlint-enable -->
@@ -186,7 +238,8 @@ def parse(data: bytes):
 画面右が、コンテナデータに対応するスキーマ情報の内容表示およびスキーマの編集をする領域です。
 
 ![](iot-repository-example.png)
-_図 7: スキーマ情報の編集画面_
+
+_図 8: スキーマ情報の編集画面_
 
 スキーマ情報はこの画面から更新できます。
 後述する編集手順後、画面上部 save ボタンでコンテナの DataID に対応するスキーマ情報を上書き保存します。
@@ -236,7 +289,7 @@ _図 7: スキーマ情報の編集画面_
 
 ![](./payload_example.png)
 
-_図 8: センサーデータ取得及びコンテナ化機能のペイロードの構造_
+_図 9: センサーデータ取得及びコンテナ化機能のペイロードの構造_
 
 _表 1: センサーデータ取得及びコンテナ化機能のペイロードのフィールドの情報_
 
@@ -270,6 +323,7 @@ _表 1: センサーデータ取得及びコンテナ化機能のペイロード
 
 このスキーマ情報は、テストラボシステムのスキーマリポジトリ機能が作るファイルフォーマットです。
 fields に含まれる内容が、ペイロード内のフィールドに対応します。
+フィールドを定義するのに以下の情報を持っています。
 
 - `type`: データ型
 - `pos`: ペイロードの開始位置からのオフセット値
@@ -279,10 +333,10 @@ fields に含まれる内容が、ペイロード内のフィールドに対応�
 <!-- textlint-disable -->
 
 :::caution
-IEC63430 上は、名前とデータ型(幅、型)、データの位置等の情報を記述する事が求められており、フォーマットについては標準化の対象としていません。
+IEC63430 上は、名前とデータ型(幅、型)、データの位置等の情報を記述する事が求められており、データフォーマットについては標準化の対象としていません。
 
 テストラボシステムにおいては、スキーマ情報は JSON で表現しています。
-しかし、JSON である必然性はなく、JSON でのキー名や値の種類等も標準化の対象としていません。
+しかし、JSON である必然性はなく、他の形式でも構いません。
 :::
 
 <!-- textlint-enable -->
@@ -298,10 +352,10 @@ IEC63430 上は、名前とデータ型(幅、型)、データの位置等の情
 
 ![フィールド例](schema_field.png)
 
-_図 9: スキーマリポジトリ機能画面での dt の例_
+_図 10: スキーマリポジトリ機能画面での dt の例_
 
-図 9: において、`0x00000183ac9b6882` というバイト列を、フィールドの `pos`(オフセット)と `length`(データ幅)で取り出して、`type`で 8 バイトの符号なし整数として解釈した結果が `1665048209538`(符号なし整数) です。
+図 10: において、`0x00000183ac9b6882` というバイト列(Raw)を、フィールドの `pos`(オフセット)と `length`(データ幅)で取り出して、`type`で 8 バイトの符号なし整数として解釈した結果が `1665048209538`(Data) です。
 
 このように、スキーマ情報のフィールド定義を基にコンテナのペイロードから名前と型のあるデータを取り出して使うことができます。
 
-以上で、テストラボシステムにおけるスキーマ情報の実装例及びスキーマ情報の利用方法の例、スキーマリポジトリ機能上での表示の説明を示しました。
+以上で、テストラボシステムにおけるスキーマ情報の実装例及びスキーマ情報の利用方法の例、スキーマリポジトリ機能での表示の説明を示しました。
