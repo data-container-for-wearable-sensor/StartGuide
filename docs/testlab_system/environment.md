@@ -3,13 +3,20 @@
 ## 動作環境
 
 テストラボシステムは、一般的な Windows PC 上で動作可能です。
-また、Docker が動作する一般的な PC 向けに設計されています。
-動作確認は以下の環境で行われています。
+また、Docker が動作する一般的なコンピュータ向けに設計されています。
+動作を想定している環境は以下です。
 
-- 動作確認環境
+- 動作を想定している環境
+  - OS: Docker が動作する OS
+  - MEM: 16GB 程度
+
+実際に動作を確認した環境は以下です。
+以下の環境では動作した実績を示す情報であり、必要なスペックを示すものではありません。
+
+- 動作確認済環境(1)
   - OS: Windows11 Pro
     - CPU: AMD Ryzen 7 PRO 5850U
-    - MEM: 48GB
+    - MEM: 48GB(メモリ消費 16GB 程度)
   - WSL2(Ubuntu 22.04)
   - Rancher Desktop(WSL2)
     - Docker 環境として利用
@@ -17,12 +24,11 @@
   - PC ブラウザ
     - Google Chrome
   - スマートフォン
-    - Safari(iPhoneSE2/iOS16)
-- 動作を想定している環境
-  - OS: Docker が動作する OS
-  - MEM: 16GB 程度
-
-別の動作確認済の環境として、AWS EC2 サービスの c5.xlarge でも動作を確認しています。
+    - Safari(iPhoneSE3/iOS16)
+- 動作確認済環境(2)
+  - Amazon EC2 サービス
+    - OS: Ubuntu 22.04 LTS
+    - Instance Type: c5.xlarge / vCPU 2 / MEM 8GB
 
 ## 機能とシステム構成
 
@@ -470,12 +476,12 @@ _図 F-1:システム構成における設定箇所_
    ![LoadFileButton](environment/iot-repository-loaddata.png)
    _図 F-2:スキーマリポジトリ機能の画面表示_
 
-2. コンテナデータの読み込み  
+1. コンテナデータの読み込み  
    画面の右上の[Load File]ボタンを押下し、ダウンロードしたファイルを読み込みます。  
    ![LoadFileButton](environment/iot-repository-loaddata2.png)
    _図 F-3: コンテナデータの読み込み_
 
-3. 読み込み結果のプレビュー
+1. 読み込み結果のプレビュー
 
    ![ExampleSchema](environment/iot-repository-example.png)
    _図 F-4:スキーマリポジトリ機能でのコンテナ読み込み時の画面表示_
@@ -521,32 +527,32 @@ ngrok は、ローカルネットワークのサーバを公開し外部から�
 これを利用することで、スマートフォンセンサの情報を利用できるようにします。
 
 1. ngrok の Free プランのアカウント登録  
-  [https://ngrok.com/](https://ngrok.com/) で登録します。
+   [https://ngrok.com/](https://ngrok.com/) で登録します。
 
 1. ngrok の AuthTokens の取得  
-  [https://dashboard.ngrok.com/get-started/your-authtoken](https://dashboard.ngrok.com/get-started/your-authtoken)
-  で Authtokens を発行する
+   [https://dashboard.ngrok.com/get-started/your-authtoken](https://dashboard.ngrok.com/get-started/your-authtoken)
+   で Authtokens を発行する
 
 1. AuthTokens を設定  
-  docker compose を実行する shell で以下を実行し、環境変数に AuthTokens を設定する。
+   docker compose を実行する shell で以下を実行し、環境変数に AuthTokens を設定する。
 
-  ```
-  export NGROK_AUTHTOKEN={発行したAuthToken}
-  ```
+```
+export NGROK_AUTHTOKEN={発行したAuthToken}
+```
 
-  環境変数 NGROK_AUTHTOKEN に AuthTokens を書き込み、`compose-dev.yaml` からこの環境変数を利用して ngrok を起動します。
-  環境変数の値を利用して ngrok を実行するための設定は、[compose-dev.yaml](https://github.com/sensing-iot-standard-consortium-ja/test-lab-system/blob/main/compose-dev.yaml)に書かれています。
+環境変数 NGROK_AUTHTOKEN に AuthTokens を書き込み、`compose-dev.yaml` からこの環境変数を利用して ngrok を起動します。
+環境変数の値を利用して ngrok を実行するための設定は、[compose-dev.yaml](https://github.com/sensing-iot-standard-consortium-ja/test-lab-system/blob/main/compose-dev.yaml)に書かれています。
 
 1. docker compose で ngrok を実行します。
-  具体的には、以下のコマンドを実行します。
+   具体的には、以下のコマンドを実行します。
 
-  `docker compose -f compose-dev.yaml run ngrok`  
-  すると以下のような画面が表示される。
-  ![ngrok](environment/ngrok.png)
+`docker compose -f compose-dev.yaml run ngrok`  
+ すると以下のような画面が表示される。
+![ngrok](environment/ngrok.png)
 
-  _図 G-2:ngrok の動作時の画面_
+_図 G-2:ngrok の動作時の画面_
 
-  `Forwarding` に表示される ngrok のサービスの URL をスマートフォンで開くことで、センサデータを送る準備ができます。
+`Forwarding` に表示される ngrok のサービスの URL をスマートフォンで開くことで、センサデータを送る準備ができます。
 
 ### センサデータの送信
 
@@ -556,7 +562,7 @@ ngrok は、ローカルネットワークのサーバを公開し外部から�
 
 _図 G-3:システム構成における設定箇所_
 
-ここでは、センサーデータ取得及びコンテナ化機能にhttpsでアクセスできるものとして手順を進めます。
+ここでは、センサーデータ取得及びコンテナ化機能に https でアクセスできるものとして手順を進めます。
 
 まず、サービスの URL をスマートフォンで開くことで以下の画面が表示されます。
 [直前の手順(ngrok によるセンサデータの取得)で取得した Forwarding の URL](./environment#ngrok-によるセンサデータの取得)を、開いてください。
