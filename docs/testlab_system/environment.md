@@ -85,13 +85,13 @@ docker のサブコマンドである、docker compose でアプリケーショ�
 
 ```
 ~$ cd test-lab-system/
-~/testlab-tutorial$ docker compose up -d
+~/test-lab-system$ docker compose up -d
 ```
 
 実行結果を確認します。
 
 ```
-~/testlab-tutorial$ docker compose ps -a
+~/test-lab-system$ docker compose ps -a
 ```
 
 で `container-consumer` 以外が `Up` のステータスになっていれば期待通りです。
