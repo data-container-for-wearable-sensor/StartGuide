@@ -79,7 +79,6 @@ const sidebars = {
           label: 'ライセンス',
           id: 'etc/license',
         },
-
         {
           type: 'doc',
           label: 'ソースコード',
@@ -94,6 +93,11 @@ const sidebars = {
           type: 'doc',
           label: 'リンク集',
           id: 'etc/links',
+        },
+        {
+          type: 'doc',
+          label: '当サイトのご利用にあたって',
+          id: 'etc/terms-of-use',
         },
       ]
     }

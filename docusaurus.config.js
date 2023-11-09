@@ -91,6 +91,13 @@ const config = {
         darkTheme: darkCodeTheme,
       },
     }),
+  scripts: [
+    {
+      src: 'https://plausible.io/js/script.js',
+      defer: true,
+      'data-domain': 'data-container-for-wearable-sensor.github.io,all.fintan'
+    }
+  ]
 };
 
 module.exports = config;
