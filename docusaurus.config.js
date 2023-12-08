@@ -75,6 +75,12 @@ const config = {
             label: 'コンテナフォーマットスタートガイド',
           },
           {
+            href: 'https://fintan.jp',
+            label: 'Fintan',
+            src: 'img/fintan-logo.png',
+            position: 'right',
+          },
+          {
             href: 'https://github.com/sensing-iot-standard-consortium-ja',
             label: 'GitHub',
             position: 'right',
